@@ -34,7 +34,8 @@
     <section class="panel" aria-labelledby="trend-h">
       <h2 id="trend-h">Has it changed over time?</h2>
       <p class="panel-sub">Share of annual filers reporting a material (or
-        reasonably likely material) cyber impact, by fiscal year.</p>
+        reasonably likely material) cyber impact, grouped by the calendar year in
+        which each company's fiscal year ended.</p>
       <div id="chart-fy" class="chart"></div>
       <p class="note" id="fy-note"></p>
     </section>
@@ -119,9 +120,9 @@
         <li><strong>Denominator.</strong> The materiality rate is among filers
           that answered the flag (yes ÷ (yes + no)); "not disclosed" filers are
           shown separately and excluded from the rate.</li>
-        <li><strong>Recent cohorts are incomplete</strong> — the newest and
-          oldest fiscal years contain only the filers that happen to fall in the
-          data window, so read those bars with caution.</li>
+        <li><strong>Recent year-ends are incomplete</strong> — filings arrive
+          months after a company's year-end, so the most recent year-end bucket
+          is still filling in and its rate is provisional.</li>
         <li><strong>Source.</strong> SEC EDGAR Financial Statement and Notes Data
           Sets (the <code>cyd:</code> Inline-XBRL taxonomy). Self-reported and
           unaudited. Incident text is truncated by the SEC; follow the link for

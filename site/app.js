@@ -87,20 +87,22 @@ function renderHero(s) {
 }
 
 function renderFy(s) {
-  const rows = s.materiality.by_fiscal_year;
+  const rows = s.materiality.by_yearend;
   const dmax = niceMax(Math.max(...rows.map((r) => r.rate || 0)));
-  const items = rows.map((r) => {
-    const partial = r.total < 200; // thin/incomplete cohorts
+  const items = rows.map((r, i) => {
+    // The most recent year-end bucket is always still filling (filing lag);
+    // very thin early buckets are unreliable too.
+    const partial = i === rows.length - 1 || r.total < 100;
     return {
-      label: "FY " + r.fy,
+      label: r.yearend + " year-ends",
       rate: r.rate,
       partial,
-      sublabel: `n = ${num(r.total)}${partial ? " · partial cohort" : ""}`,
+      sublabel: `n = ${num(r.total)}${partial ? " · reporting in progress" : ""}`,
     };
   });
-  $("chart-fy").innerHTML = hBars(items, { domainMax: dmax, labelW: 150 });
+  $("chart-fy").innerHTML = hBars(items, { domainMax: dmax, labelW: 170 });
   $("fy-note").textContent =
-    "Greyed bars are partial cohorts: the earliest and latest fiscal years only include filers that fall inside the data window, so their rates are unreliable.";
+    "Each company is placed by the calendar year of its fiscal year-end — the date its disclosure is “as of”. Greyed bars are still filling in: companies whose year ends late in a period file months afterwards, so the most recent year is incomplete.";
 }
 
 function renderForm(s) {

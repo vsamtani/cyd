@@ -70,11 +70,13 @@ const GOVERNANCE_IN = GOVERNANCE_TAGS.map((t) => `'${t}'`).join(",");
 const ANNUAL_CTE = `
   WITH annual AS (
     SELECT adsh, cik, fy, sic, pubfloatusd,
+           substr(period, 1, 4) AS yend,  -- calendar year of fiscal year-end
            CASE WHEN form LIKE '20-F%' THEN '20-F' ELSE '10-K' END AS form_class,
            ROW_NUMBER() OVER (PARTITION BY cik, fy
                               ORDER BY filed_date DESC, adsh DESC) AS rn
     FROM filings
-    WHERE form IN ('10-K','10-K/A','10-KT','10-KT/A','20-F','20-F/A') AND fy IS NOT NULL
+    WHERE form IN ('10-K','10-K/A','10-KT','10-KT/A','20-F','20-F/A')
+      AND fy IS NOT NULL AND period <> ''
   ),
   latest AS (SELECT * FROM annual WHERE rn = 1),
   mat AS (
@@ -125,10 +127,12 @@ function buildSummary(db: DB): unknown {
            SUM(mat IS NULL) AS na, COUNT(*) AS pop FROM pop
   `);
 
-  const matByFy = many<{ fy: number; yes: number; no: number; na: number }>(`
+  // Bucket by the calendar year of each company's fiscal year-end (the date the
+  // disclosed state is "as of"), not the self-reported fiscal-year integer.
+  const matByYearEnd = many<{ yearend: string; yes: number; no: number; na: number }>(`
     ${ANNUAL_CTE}
-    SELECT fy, SUM(mat=1) AS yes, SUM(mat=0) AS no, SUM(mat IS NULL) AS na
-    FROM pop GROUP BY fy ORDER BY fy
+    SELECT yend AS yearend, SUM(mat=1) AS yes, SUM(mat=0) AS no, SUM(mat IS NULL) AS na
+    FROM pop GROUP BY yend ORDER BY yend
   `).map((r) => ({ ...r, total: r.yes + r.no, rate: rate(r.yes, r.no) }));
 
   const matByForm = many<{ form_class: string; yes: number; no: number }>(`
@@ -244,7 +248,7 @@ function buildSummary(db: DB): unknown {
         yes: matOverall.yes, no: matOverall.no, not_disclosed: matOverall.na,
         rate: rate(matOverall.yes, matOverall.no),
       },
-      by_fiscal_year: matByFy,
+      by_yearend: matByYearEnd,
       by_form: matByForm,
       by_sector: matBySector,
     },

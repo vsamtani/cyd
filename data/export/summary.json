@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-12T16:33:57.615Z",
+  "generated_at": "2026-06-12T17:01:42.663Z",
   "source": "SEC EDGAR Financial Statement and Notes Data Sets (cyd: taxonomy)",
   "coverage": {
     "first_filed": "20241029",
@@ -20,38 +20,38 @@
       "not_disclosed": 1072,
       "rate": 0.074
     },
-    "by_fiscal_year": [
+    "by_yearend": [
       {
-        "fy": 2023,
+        "yearend": "2023",
         "yes": 2,
-        "no": 14,
-        "na": 6,
-        "total": 16,
-        "rate": 0.125
+        "no": 11,
+        "na": 4,
+        "total": 13,
+        "rate": 0.1538
       },
       {
-        "fy": 2024,
-        "yes": 367,
-        "no": 4551,
-        "na": 456,
-        "total": 4918,
-        "rate": 0.0746
+        "yearend": "2024",
+        "yes": 342,
+        "no": 4290,
+        "na": 418,
+        "total": 4632,
+        "rate": 0.0738
       },
       {
-        "fy": 2025,
-        "yes": 400,
-        "no": 5026,
-        "na": 599,
-        "total": 5426,
-        "rate": 0.0737
+        "yearend": "2025",
+        "yes": 422,
+        "no": 5247,
+        "na": 640,
+        "total": 5669,
+        "rate": 0.0744
       },
       {
-        "fy": 2026,
-        "yes": 9,
-        "no": 146,
-        "na": 11,
-        "total": 155,
-        "rate": 0.0581
+        "yearend": "2026",
+        "yes": 12,
+        "no": 189,
+        "na": 10,
+        "total": 201,
+        "rate": 0.0597
       }
     ],
     "by_form": [
