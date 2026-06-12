@@ -61,7 +61,8 @@ function hBars(items, opts = {}) {
 function renderMeta(s) {
   const t = s.totals;
   $("meta").textContent =
-    `${num(t.annual_population)} annual reports from ${num(t.companies)} companies · ` +
+    `Latest annual report from each of ${num(t.companies)} companies ` +
+    `(${num(t.annual_reports)} reports across all years) · ` +
     `filings from ${ymd(s.coverage.first_filed)} to ${ymd(s.coverage.last_filed)} · ` +
     `data updated ${new Date(s.generated_at).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}`;
   $("footer-meta").textContent =

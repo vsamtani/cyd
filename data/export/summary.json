@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-12T17:01:42.663Z",
+  "generated_at": "2026-06-12T17:10:07.489Z",
   "source": "SEC EDGAR Financial Statement and Notes Data Sets (cyd: taxonomy)",
   "coverage": {
     "first_filed": "20241029",
@@ -9,16 +9,16 @@
     "filings": 11774,
     "facts": 146944,
     "companies": 6830,
-    "annual_population": 11587,
+    "annual_reports": 11587,
     "tags": 77
   },
   "materiality": {
     "tag": "CybersecurityRiskMateriallyAffectedOrReasonablyLikelyToMateriallyAffectRegistrantFlag",
     "overall": {
-      "yes": 778,
-      "no": 9737,
-      "not_disclosed": 1072,
-      "rate": 0.074
+      "yes": 457,
+      "no": 5668,
+      "not_disclosed": 705,
+      "rate": 0.0746
     },
     "by_yearend": [
       {
@@ -58,88 +58,88 @@
       {
         "form": "10-K",
         "label": "US domestic (10-K)",
-        "yes": 604,
-        "no": 8361,
-        "rate": 0.0674
+        "yes": 344,
+        "no": 4866,
+        "rate": 0.066
       },
       {
         "form": "20-F",
         "label": "Foreign (20-F)",
-        "yes": 174,
-        "no": 1376,
-        "rate": 0.1123
+        "yes": 113,
+        "no": 802,
+        "rate": 0.1235
       }
     ],
     "by_sector": [
       {
         "sector": "Agriculture, Forestry & Fishing",
-        "yes": 9,
-        "no": 46,
-        "total": 55,
-        "rate": 0.1636
-      },
-      {
-        "sector": "Manufacturing",
-        "yes": 320,
-        "no": 3506,
-        "total": 3826,
-        "rate": 0.0836
-      },
-      {
-        "sector": "Services",
-        "yes": 152,
-        "no": 1709,
-        "total": 1861,
-        "rate": 0.0817
-      },
-      {
-        "sector": "Mining",
-        "yes": 35,
-        "no": 399,
-        "total": 434,
-        "rate": 0.0806
+        "yes": 4,
+        "no": 30,
+        "total": 34,
+        "rate": 0.1176
       },
       {
         "sector": "Retail Trade",
-        "yes": 32,
-        "no": 390,
-        "total": 422,
-        "rate": 0.0758
+        "yes": 22,
+        "no": 233,
+        "total": 255,
+        "rate": 0.0863
+      },
+      {
+        "sector": "Manufacturing",
+        "yes": 185,
+        "no": 2019,
+        "total": 2204,
+        "rate": 0.0839
       },
       {
         "sector": "Unclassified",
-        "yes": 23,
-        "no": 295,
-        "total": 318,
-        "rate": 0.0723
+        "yes": 15,
+        "no": 164,
+        "total": 179,
+        "rate": 0.0838
+      },
+      {
+        "sector": "Services",
+        "yes": 91,
+        "no": 1013,
+        "total": 1104,
+        "rate": 0.0824
+      },
+      {
+        "sector": "Mining",
+        "yes": 18,
+        "no": 232,
+        "total": 250,
+        "rate": 0.072
       },
       {
         "sector": "Transportation & Utilities",
-        "yes": 48,
-        "no": 723,
-        "total": 771,
-        "rate": 0.0623
-      },
-      {
-        "sector": "Finance, Insurance & Real Estate",
-        "yes": 144,
-        "no": 2377,
-        "total": 2521,
-        "rate": 0.0571
-      },
-      {
-        "sector": "Construction",
-        "yes": 6,
-        "no": 112,
-        "total": 118,
-        "rate": 0.0508
+        "yes": 28,
+        "no": 405,
+        "total": 433,
+        "rate": 0.0647
       },
       {
         "sector": "Wholesale Trade",
-        "yes": 9,
-        "no": 180,
-        "total": 189,
-        "rate": 0.0476
+        "yes": 7,
+        "no": 114,
+        "total": 121,
+        "rate": 0.0579
+      },
+      {
+        "sector": "Finance, Insurance & Real Estate",
+        "yes": 85,
+        "no": 1387,
+        "total": 1472,
+        "rate": 0.0577
+      },
+      {
+        "sector": "Construction",
+        "yes": 2,
+        "no": 71,
+        "total": 73,
+        "rate": 0.0274
       }
     ]
   },
@@ -147,67 +147,67 @@
     "flags": [
       {
         "tag": "CybersecurityRiskManagementPositionsOrCommitteesResponsibleFlag",
-        "affirmed": 9308,
-        "explicit_no": 76,
-        "base": 11210,
-        "rate": 0.8303
+        "affirmed": 5315,
+        "explicit_no": 43,
+        "base": 6544,
+        "rate": 0.8122
       },
       {
         "tag": "CybersecurityRiskManagementPositionsOrCommitteesResponsibleReportToBoardFlag",
-        "affirmed": 8849,
-        "explicit_no": 66,
-        "base": 11210,
-        "rate": 0.7894
+        "affirmed": 5032,
+        "explicit_no": 39,
+        "base": 6544,
+        "rate": 0.7689
       },
       {
         "tag": "CybersecurityRiskManagementProcessesIntegratedFlag",
-        "affirmed": 9308,
-        "explicit_no": 237,
-        "base": 11210,
-        "rate": 0.8303
+        "affirmed": 5328,
+        "explicit_no": 152,
+        "base": 6544,
+        "rate": 0.8142
       },
       {
         "tag": "CybersecurityRiskManagementThirdPartyEngagedFlag",
-        "affirmed": 9790,
-        "explicit_no": 266,
-        "base": 11210,
-        "rate": 0.8733
+        "affirmed": 5670,
+        "explicit_no": 175,
+        "base": 6544,
+        "rate": 0.8664
       },
       {
         "tag": "CybersecurityRiskThirdPartyOversightAndIdentificationProcessesFlag",
-        "affirmed": 9115,
-        "explicit_no": 178,
-        "base": 11210,
-        "rate": 0.8131
+        "affirmed": 5224,
+        "explicit_no": 103,
+        "base": 6544,
+        "rate": 0.7983
       }
     ],
     "completeness": [
       {
         "yes_count": 0,
-        "n": 140
+        "n": 90
       },
       {
         "yes_count": 1,
-        "n": 761
+        "n": 510
       },
       {
         "yes_count": 2,
-        "n": 908
+        "n": 583
       },
       {
         "yes_count": 3,
-        "n": 1005
+        "n": 609
       },
       {
         "yes_count": 4,
-        "n": 1202
+        "n": 694
       },
       {
         "yes_count": 5,
-        "n": 7194
+        "n": 4058
       }
     ],
-    "completeness_base": 11210
+    "completeness_base": 6544
   },
   "incidents": [
     {

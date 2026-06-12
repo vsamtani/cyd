@@ -72,22 +72,29 @@ const ANNUAL_CTE = `
     SELECT adsh, cik, fy, sic, pubfloatusd,
            substr(period, 1, 4) AS yend,  -- calendar year of fiscal year-end
            CASE WHEN form LIKE '20-F%' THEN '20-F' ELSE '10-K' END AS form_class,
+           -- rn_fy: latest filing per company per fiscal year (trend basis)
            ROW_NUMBER() OVER (PARTITION BY cik, fy
-                              ORDER BY filed_date DESC, adsh DESC) AS rn
+                              ORDER BY filed_date DESC, adsh DESC) AS rn_fy,
+           -- rn_co: the single most recent annual filing per company
+           ROW_NUMBER() OVER (PARTITION BY cik
+                              ORDER BY period DESC, filed_date DESC, adsh DESC) AS rn_co
     FROM filings
     WHERE form IN ('10-K','10-K/A','10-KT','10-KT/A','20-F','20-F/A')
       AND fy IS NOT NULL AND period <> ''
   ),
-  latest AS (SELECT * FROM annual WHERE rn = 1),
+  latest AS (SELECT * FROM annual WHERE rn_fy = 1),     -- one row per company x fiscal year
+  latest_co AS (SELECT * FROM annual WHERE rn_co = 1),  -- one row per company (latest filing)
   mat AS (
     SELECT adsh, MAX(flag_value) AS mat
     FROM cyd_facts
     WHERE tag = '${MATERIALITY_TAG}'
     GROUP BY adsh
   ),
-  pop AS (
-    SELECT l.*, m.mat
-    FROM latest l LEFT JOIN mat m ON m.adsh = l.adsh
+  pop AS (        -- multi-year, for the time trend
+    SELECT l.*, m.mat FROM latest l LEFT JOIN mat m ON m.adsh = l.adsh
+  ),
+  pop_co AS (     -- one per company, for current-state metrics
+    SELECT l.*, m.mat FROM latest_co l LEFT JOIN mat m ON m.adsh = l.adsh
   )
 `;
 
@@ -120,11 +127,11 @@ function buildSummary(db: DB): unknown {
   const rate = (yes: number, no: number): number | null =>
     yes + no === 0 ? null : +(yes / (yes + no)).toFixed(4);
 
-  // --- Materiality, over the deduped annual population ---
-  const matOverall = one<{ yes: number; no: number; na: number; pop: number }>(`
+  // --- Materiality: current state, one row per company (latest filing) ---
+  const matOverall = one<{ yes: number; no: number; na: number; companies: number }>(`
     ${ANNUAL_CTE}
     SELECT SUM(mat=1) AS yes, SUM(mat=0) AS no,
-           SUM(mat IS NULL) AS na, COUNT(*) AS pop FROM pop
+           SUM(mat IS NULL) AS na, COUNT(*) AS companies FROM pop_co
   `);
 
   // Bucket by the calendar year of each company's fiscal year-end (the date the
@@ -138,7 +145,7 @@ function buildSummary(db: DB): unknown {
   const matByForm = many<{ form_class: string; yes: number; no: number }>(`
     ${ANNUAL_CTE}
     SELECT form_class, SUM(mat=1) AS yes, SUM(mat=0) AS no
-    FROM pop GROUP BY form_class ORDER BY form_class
+    FROM pop_co GROUP BY form_class ORDER BY form_class
   `).map((r) => ({
     form: r.form_class,
     label: r.form_class === "20-F" ? "Foreign (20-F)" : "US domestic (10-K)",
@@ -151,7 +158,7 @@ function buildSummary(db: DB): unknown {
     ${ANNUAL_CTE}
     SELECT COALESCE(sic,'') AS sic, SUM(mat=1) AS yes, SUM(mat=0) AS no,
            SUM(mat IS NULL) AS na
-    FROM pop GROUP BY sic
+    FROM pop_co GROUP BY sic
   `)) {
     const div = sicDivision(r.sic || null);
     const cur = sectorAgg.get(div) ?? { yes: 0, no: 0, na: 0 };
@@ -165,18 +172,18 @@ function buildSummary(db: DB): unknown {
     .filter((r) => r.total >= 30) // suppress tiny, noisy cells
     .sort((a, b) => (b.rate ?? 0) - (a.rate ?? 0));
 
-  // --- Governance scorecard ---
-  // Reusable CTE: one row per (annual filing, governance flag) collapsed value.
+  // --- Governance scorecard (one row per company, latest filing) ---
+  // Reusable CTE: one row per (company, governance flag) collapsed value.
   const GOV_FV = `
     ${ANNUAL_CTE}
     , fv AS (
       SELECT c.adsh, c.tag, MAX(c.flag_value) AS v
-      FROM cyd_facts c JOIN latest l ON l.adsh = c.adsh
+      FROM cyd_facts c JOIN latest_co l ON l.adsh = c.adsh
       WHERE c.tag IN (${GOVERNANCE_IN}) AND c.flag_value IS NOT NULL
       GROUP BY c.adsh, c.tag
     )`;
 
-  // How many of the five governance practices each filer affirms. The base is
+  // How many of the five governance practices each company affirms. The base is
   // companies that disclosed governance at all (≥1 of the five flags).
   const completeness = many<{ yes_count: number; n: number }>(`
     ${GOV_FV}, per AS (SELECT adsh, SUM(v=1) AS yes_count FROM fv GROUP BY adsh)
@@ -238,8 +245,10 @@ function buildSummary(db: DB): unknown {
     totals: {
       filings: one<{ n: number }>("SELECT COUNT(*) n FROM filings").n,
       facts: one<{ n: number }>("SELECT COUNT(*) n FROM cyd_facts").n,
-      companies: one<{ n: number }>("SELECT COUNT(DISTINCT cik) n FROM filings").n,
-      annual_population: matOverall.pop,
+      // distinct companies with an annual cyber filing (latest-filing basis)
+      companies: matOverall.companies,
+      // total annual reports across all years (the trend's basis)
+      annual_reports: matByYearEnd.reduce((a, r) => a + r.yes + r.no + r.na, 0),
       tags: one<{ n: number }>("SELECT COUNT(*) n FROM cyd_tags").n,
     },
     materiality: {
