@@ -168,7 +168,7 @@ function renderCompleteness(s) {
     .slice()
     .sort((a, b) => b.yes_count - a.yes_count)
     .map((c) => ({ label: c.yes_count + " of 5", rate: c.n / base, n: c.n }));
-  $("chart-comp").innerHTML = hBars(items, { labelW: 120, fill: "var(--good)" });
+  $("chart-comp").innerHTML = hBars(items, { labelW: 120, fill: "var(--good)", domainMax: 1 });
   const all5 = g.completeness.find((c) => c.yes_count === 5);
   if (all5) {
     $("comp-note").textContent =
