@@ -3,6 +3,7 @@ import { openDb } from "./lib/db.js";
 import { fetchAll } from "./fetchFsn.js";
 import { ingestAll } from "./ingest.js";
 import { exportAll, EXPORT_DIR } from "./export.js";
+import { buildSite } from "./buildSite.js";
 
 const program = new Command();
 program
@@ -41,6 +42,14 @@ program
     } finally {
       db.close();
     }
+  });
+
+program
+  .command("site")
+  .description("Assemble the deployable static dashboard into dist/")
+  .action(() => {
+    const dir = buildSite();
+    console.log(`Built static site -> ${dir}`);
   });
 
 program

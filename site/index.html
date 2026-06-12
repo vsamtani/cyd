@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>US SEC Cybersecurity Disclosures — A Board's-Eye View</title>
+  <meta name="description" content="How US-listed companies disclose the business impact of cyber risk to the SEC — a benchmark for boards." />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <p class="eyebrow">Cyber risk, as the financial regulator sees it</p>
+      <h1>US SEC Cybersecurity Disclosures</h1>
+      <p class="lede">
+        Since December 2024, US-listed companies must tell the SEC — in
+        machine-readable form — how cyber risk affects their business, how their
+        board oversees it, and when a material incident occurs. This is a
+        board's-eye view of what they are saying. It is about
+        <strong>business and financial impact</strong>, not technical metrics.
+      </p>
+      <p id="meta" class="meta">Loading…</p>
+    </div>
+  </header>
+
+  <main class="wrap" id="main">
+    <!-- Hero materiality metric -->
+    <section class="panel hero" id="hero" aria-labelledby="hero-h">
+      <h2 id="hero-h" class="sr-only">Headline materiality metric</h2>
+      <div id="hero-body"></div>
+    </section>
+
+    <!-- Trend by fiscal year -->
+    <section class="panel" aria-labelledby="trend-h">
+      <h2 id="trend-h">Has it changed over time?</h2>
+      <p class="panel-sub">Share of annual filers reporting a material (or
+        reasonably likely material) cyber impact, by fiscal year.</p>
+      <div id="chart-fy" class="chart"></div>
+      <p class="note" id="fy-note"></p>
+    </section>
+
+    <!-- By issuer type -->
+    <section class="panel" aria-labelledby="form-h">
+      <h2 id="form-h">US domestic vs. foreign issuers</h2>
+      <p class="panel-sub">Foreign private issuers file on Form 20-F; US
+        domestic companies file on Form 10-K.</p>
+      <div id="chart-form" class="chart"></div>
+    </section>
+
+    <!-- By sector -->
+    <section class="panel" aria-labelledby="sector-h">
+      <h2 id="sector-h">Which sectors report the most impact?</h2>
+      <p class="panel-sub">Materiality rate by industry division (sectors with
+        at least 30 filers).</p>
+      <div id="chart-sector" class="chart"></div>
+    </section>
+
+    <!-- Incident feed -->
+    <section class="panel" aria-labelledby="inc-h">
+      <h2 id="inc-h">Recently disclosed material incidents</h2>
+      <p class="panel-sub">When a cyber incident is material, companies must
+        file within four business days. These are the most recent disclosures in
+        the dataset — illustrative of what "material" looks like in practice.</p>
+      <div id="incidents" class="incidents"></div>
+    </section>
+
+    <!-- UK context -->
+    <section class="panel context" aria-labelledby="ctx-h">
+      <h2 id="ctx-h">Why this matters for UK boards</h2>
+      <p>The UK has <strong>no equivalent mandatory cyber-disclosure regime</strong>.
+        UK-listed companies are not required to tell investors, in a structured
+        way, whether cyber risk has materially affected them or how the board
+        oversees it. But the underlying business risk is broadly the same on both
+        sides of the Atlantic — and disclosure norms have a habit of crossing it.
+        The US picture is therefore a useful preview: of the questions a board may
+        soon be expected to answer, and of how comparable companies are already
+        answering them.</p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <h2>Method &amp; caveats</h2>
+      <ul class="caveats">
+        <li><strong>This measures disclosure, not security.</strong> A company
+          saying cyber has not materially affected it is a statement to the
+          regulator, not an audited fact about its defences.</li>
+        <li><strong>Population.</strong> Rates are computed over annual reports
+          (Forms 10-K and 20-F, including amendments), deduplicated to the latest
+          filing per company and fiscal year.</li>
+        <li><strong>Denominator.</strong> The materiality rate is among filers
+          that answered the flag (yes ÷ (yes + no)); "not disclosed" filers are
+          shown separately and excluded from the rate.</li>
+        <li><strong>Recent cohorts are incomplete</strong> — the newest and
+          oldest fiscal years contain only the filers that happen to fall in the
+          data window, so read those bars with caution.</li>
+        <li><strong>Source.</strong> SEC EDGAR Financial Statement and Notes Data
+          Sets (the <code>cyd:</code> Inline-XBRL taxonomy). Self-reported and
+          unaudited. Incident text is truncated by the SEC; follow the link for
+          the full filing.</li>
+      </ul>
+      <p class="updated" id="footer-meta"></p>
+    </div>
+  </footer>
+
+  <script src="./app.js" defer></script>
+</body>
+</html>

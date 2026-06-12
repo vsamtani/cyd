@@ -1,12 +1,310 @@
 {
-  "generated_at": "2026-06-12T11:40:16.922Z",
+  "generated_at": "2026-06-12T13:57:31.177Z",
   "source": "SEC EDGAR Financial Statement and Notes Data Sets (cyd: taxonomy)",
+  "coverage": {
+    "first_filed": "20241029",
+    "last_filed": "20260529"
+  },
   "totals": {
     "filings": 11751,
     "facts": 146685,
     "companies": 6829,
+    "annual_population": 11573,
     "tags": 77
   },
+  "materiality": {
+    "tag": "CybersecurityRiskMateriallyAffectedOrReasonablyLikelyToMateriallyAffectRegistrantFlag",
+    "overall": {
+      "yes": 778,
+      "no": 9724,
+      "not_disclosed": 1071,
+      "rate": 0.0741
+    },
+    "by_fiscal_year": [
+      {
+        "fy": 2023,
+        "yes": 2,
+        "no": 14,
+        "na": 6,
+        "total": 16,
+        "rate": 0.125
+      },
+      {
+        "fy": 2024,
+        "yes": 367,
+        "no": 4544,
+        "na": 455,
+        "total": 4911,
+        "rate": 0.0747
+      },
+      {
+        "fy": 2025,
+        "yes": 400,
+        "no": 5020,
+        "na": 599,
+        "total": 5420,
+        "rate": 0.0738
+      },
+      {
+        "fy": 2026,
+        "yes": 9,
+        "no": 146,
+        "na": 11,
+        "total": 155,
+        "rate": 0.0581
+      }
+    ],
+    "by_form": [
+      {
+        "form": "10-K",
+        "label": "US domestic (10-K)",
+        "yes": 604,
+        "no": 8348,
+        "rate": 0.0675
+      },
+      {
+        "form": "20-F",
+        "label": "Foreign (20-F)",
+        "yes": 174,
+        "no": 1376,
+        "rate": 0.1123
+      }
+    ],
+    "by_sector": [
+      {
+        "sector": "Agriculture, Forestry & Fishing",
+        "yes": 9,
+        "no": 44,
+        "total": 53,
+        "rate": 0.1698
+      },
+      {
+        "sector": "Manufacturing",
+        "yes": 320,
+        "no": 3501,
+        "total": 3821,
+        "rate": 0.0837
+      },
+      {
+        "sector": "Services",
+        "yes": 152,
+        "no": 1705,
+        "total": 1857,
+        "rate": 0.0819
+      },
+      {
+        "sector": "Mining",
+        "yes": 35,
+        "no": 399,
+        "total": 434,
+        "rate": 0.0806
+      },
+      {
+        "sector": "Retail Trade",
+        "yes": 32,
+        "no": 390,
+        "total": 422,
+        "rate": 0.0758
+      },
+      {
+        "sector": "Unclassified",
+        "yes": 23,
+        "no": 294,
+        "total": 317,
+        "rate": 0.0726
+      },
+      {
+        "sector": "Transportation & Utilities",
+        "yes": 48,
+        "no": 723,
+        "total": 771,
+        "rate": 0.0623
+      },
+      {
+        "sector": "Finance, Insurance & Real Estate",
+        "yes": 144,
+        "no": 2376,
+        "total": 2520,
+        "rate": 0.0571
+      },
+      {
+        "sector": "Construction",
+        "yes": 6,
+        "no": 112,
+        "total": 118,
+        "rate": 0.0508
+      },
+      {
+        "sector": "Wholesale Trade",
+        "yes": 9,
+        "no": 180,
+        "total": 189,
+        "rate": 0.0476
+      }
+    ]
+  },
+  "incidents": [
+    {
+      "company": "ONCOLOGY INSTITUTE, INC.",
+      "form": "8-K",
+      "filed_date": "20260522",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1799191/000107997326000721/0001079973-26-000721-index.htm",
+      "informationNotAvailableOrUndetermined": "on May 20, 2026, Kroll, who is the third-party administrator for the Vendor, notified the Company that the Vendor had detected unauthorized access by a third party to certain information systems of the Company, including systems affecting data of patients.",
+      "materialImpactOrReasonablyLikelyMaterialImpact": "The Company is reserving all rights with respect to potential claims against relevant third parties or service providers. Although the Companys investigation and assessment remain ongoing, as of the date of this filing, the Company believes that the incident has not had a mate…",
+      "nature": "on November 6, 2025, regarding a cybersecurity incident affecting a software service provider (Vendor) utilized by the Company. At the time of the prior voluntary disclosure, the Vendor had indicated that investigation was still ongoing and it could not yet confirm any evidenc…",
+      "scope": "However, on May 20, 2026, Kroll, who is the third-party administrator for the Vendor, notified the Company that the Vendor had detected unauthorized access by a third party to certain information systems of the Company, including systems affecting data of patients. The Company…",
+      "timing": "Because of the Companys technology security and continuity plan, the Company worked swiftly in response, and its operations have continued in all material respects since the detection of the incident. The Company remains committed to protecting the healthcare and other persona…"
+    },
+    {
+      "company": "STRYKER CORP",
+      "form": "8-K/A",
+      "filed_date": "20260409",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/310764/000119312526149607/0001193125-26-149607-index.htm",
+      "informationNotAvailableOrUndetermined": "The Company believes that the incident has not had, and is not reasonably likely to have, a material impact on the Companys 2026 full-year guidance.",
+      "materialImpactOrReasonablyLikelyMaterialImpact": "the Company has determined that the incident had a material impact on its operations, with resulting impact to the Companys financial results for the first quarter of 2026.",
+      "nature": "on March11, 2026, the Company identified a cybersecurity incident, which when it occurred, caused disruptions to the Companys business operations. Since then, the Company has worked diligently, together with third-party experts and law enforcement, to contain and neutralize th…",
+      "scope": "As of the date of this Amendment, the Company is fully operational across its global manufacturing network and commercial, ordering and distribution systems have been restored.",
+      "timing": "the Company has worked diligently, together with third-party experts and law enforcement, to contain and neutralize the impact of the incident and restore operations. The Companys investigation of the incident remains ongoing."
+    },
+    {
+      "company": "CARECLOUD, INC.",
+      "form": "8-K",
+      "filed_date": "20260327",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1582982/000149315226013239/0001493152-26-013239-index.htm",
+      "nature": "The Company is continuing to investigate the nature and scope of the incident.",
+      "scope": "This Current Report on Form 8-K contains forward-looking statements within the meaning of the federal securities laws, including statements regarding the scope of the incident, whether and to what extent patient information or other data was accessed or exfiltrated, the catego…"
+    },
+    {
+      "company": "TRIO-TECH INTERNATIONAL",
+      "form": "8-K",
+      "filed_date": "20260320",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/732026/000143774926009193/0001437749-26-009193-index.htm",
+      "nature": "On March 11, 2026, Trio-Tech International (Company) identified and responded to a cybersecurity incident in one of its subsidiaries (subsidiary) in Singapore. The subsidiary experienced a ransomware incident that resulted in encryption of certain files within the Companys net…"
+    },
+    {
+      "company": "WYTEC INTERNATIONAL INC",
+      "form": "8-K/A",
+      "filed_date": "20260203",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1560143/000168316826000732/0001683168-26-000732-index.htm",
+      "materialImpactOrReasonablyLikelyMaterialImpact": "As of the date of this Amendment, the Company believes that the impacts of the cyber incident consist primarily of costs associated with rebuilding the website on a new server and hosting platform and enhancing security protocols.",
+      "nature": "Item 1.05 Material Cybersecurity Incident. As disclosed in a Current Report on Form 8-K (the Original Report), on August 25, 2025, Wytec International, Inc. (the Company) became aware of a cybersecurity incident in which a bad actor published a defaced website at the Companys…",
+      "scope": "As disclosed in a Current Report on Form 8-K (the Original Report), on August 25, 2025, Wytec International, Inc. (the Company) became aware of a cybersecurity incident in which a bad actor published a defaced website at the Companys web address, wytecintl.com. After the Compa…"
+    },
+    {
+      "company": "COUPANG, INC.",
+      "form": "8-K/A",
+      "filed_date": "20251229",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1834584/000183458425000202/0001834584-25-000202-index.htm",
+      "materialImpactOrReasonablyLikelyMaterialImpact": "In addition, Coupang Corp. announced a customer compensation program to issue approximately 1.685trillion won (approximately $1.2billion) worth of vouchers, starting January 15, 2026, to customers who were notified of the Incident at the end of November 2025 that may be applie…",
+      "nature": "On December 24, 2025 (PST) and December 28, 2025 (PST), Coupang Corp., a wholly-owned Korean subsidiary (Coupang Corp.) of Coupang, Inc. (Coupang, Inc., our, or we) (Coupang Corp., together with Coupang, Inc. and its subsidiaries and affiliates, Coupang,), issued updates (coll…",
+      "scope": "The Updates provided, in part, that the perpetrator of the Incident has been identified, is cooperating with Coupang and investigators, and has turned over all devices used in the Incident. Further, the investigation to date indicates that while approximately 33million account…",
+      "timing": "On December 24, 2025 (PST) and December 28, 2025 (PST), Coupang Corp., a wholly-owned Korean subsidiary (Coupang Corp.) of Coupang, Inc. (Coupang, Inc., our, or we) (Coupang Corp., together with Coupang, Inc. and its subsidiaries and affiliates, Coupang,), issued updates (coll…"
+    },
+    {
+      "company": "COUPANG, INC.",
+      "form": "8-K",
+      "filed_date": "20251216",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1834584/000183458425000196/0001834584-25-000196-index.htm",
+      "materialImpactOrReasonablyLikelyMaterialImpact": "While one or more Korean regulators will potentially impose financial penalties, at this time we cannot reasonably estimate any amount of losses or range of losses that may result from such penalties. Coupangs operations have not been materially disrupted. Coupang remains subj…",
+      "nature": "On November 18, 2025, Coupang Corp. (Coupang Corp.), a wholly-owned Korean subsidiary of Coupang, Inc. (Coupang Corp., together with Coupang, Inc. (Coupang, Inc., our, or we) and its subsidiaries and affiliates, Coupang,), became aware of a cybersecurity incident involving una…",
+      "scope": "Based on investigative findings, Coupang has determined that a former employee may have obtained the name, phone number, delivery address, and email address associated with up to 33 million customer accounts, and certain order histories for a subset of the impacted acc ounts.…",
+      "timing": "On November 18, 2025, Coupang Corp. (Coupang Corp.), a wholly-owned Korean subsidiary of Coupang, Inc. (Coupang Corp., together with Coupang, Inc. (Coupang, Inc., our, or we) and its subsidiaries and affiliates, Coupang,), became aware of a cybersecurity incident involving una…"
+    },
+    {
+      "company": "BAYFIRST FINANCIAL CORP.",
+      "form": "8-K",
+      "filed_date": "20251030",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1649739/000164973925000246/0001649739-25-000246-index.htm",
+      "informationNotAvailableOrUndetermined": "BayFirst cannot quantify any material impact to its financial condition or operations, at this time.",
+      "nature": "On August 14, 2025, BayFirst National Bank (BayFirst) was notified of a cybersecurity incident experienced by a third-party provider of marketing services. On October 28, 2025, the third-party provider confirmed that some customer information was exposed by this incident. Upon…",
+      "scope": "Upon learning of the incident, the third-party provider immediately launched an investigation, worked with BayFirst to understand the scope of the issue, and engaged the appropriate cybersecurity experts to assist. The third-party provider also promptly notified law enforcemen…",
+      "timing": "On August 14, 2025, BayFirst National Bank (BayFirst) was notified of a cybersecurity incident experienced by a third-party provider of marketing services. On October 28, 2025, the third-party provider confirmed that some customer information was exposed by this incident."
+    },
+    {
+      "company": "JEWETT CAMERON TRADING CO LTD",
+      "form": "8-K",
+      "filed_date": "20251021",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/885307/000107997325001631/0001079973-25-001631-index.htm",
+      "nature": "unauthorized access to portions of the Companys information technology (IT) environment and claimed to have unlawfully accessed certain Company information and data. The Company immediately activated its cyber incident response process to contain the intrusion, assess and inve…",
+      "scope": "On October 15, 2025, Jewett-Cameron Trading Co. Ltd. (the Company) learned that a threat actor had gained unauthorized access to portions of the Companys information technology (IT) environment and claimed to have unlawfully accessed certain Company information and data. The C…"
+    },
+    {
+      "company": "WYTEC INTERNATIONAL INC",
+      "form": "8-K",
+      "filed_date": "20250829",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1560143/000168316825006583/0001683168-25-006583-index.htm",
+      "materialImpactOrReasonablyLikelyMaterialImpact": "The financial losses from this incident are difficult to quantify at this point, but will likely be significant.",
+      "nature": "Item 1.05 Material Cybersecurity Incident. On August 25, 2025 , Wytec International, Inc. (the Company) became aware of a cybersecurity incident in which a bad actor published a defaced website at the Companys web address, wytecintl.com. After the Company restored the website…",
+      "scope": "Wytec International, Inc. (the Company) became aware of a cybersecurity incident in which a bad actor published a defaced website at the Companys web address, wytecintl.com. After the Company restored the website from back-ups, the bad actor was able to deface the website agai…",
+      "timing": "August 25, 2025"
+    },
+    {
+      "company": "UNITED NATURAL FOODS INC",
+      "form": "8-K",
+      "filed_date": "20250626",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1020859/000102085925000036/0001020859-25-000036-index.htm",
+      "materialImpactOrReasonablyLikelyMaterialImpact": "reasonably likely to have a material impact on the Companys net income/(loss) and adjusted EBITDA for the fourth fiscal quarter of 2025 compared to its internal projections prior to the incident",
+      "nature": "unauthorized activity on certain information technology (IT) systems. As disclosed in the Prior 8-K, the Company promptly activated its incident response plan and implemented containment measures, including proactively taking certain systems offline, which temporarily impacted…",
+      "scope": "United Natural Foods, Inc. (the Company) became aware of unauthorized activity on certain information technology (IT) systems. As disclosed in the Prior 8-K, the Company promptly activated its incident response plan and implemented containment measures, including proactively t…",
+      "timing": "As previously disclosed in a Current Report on Form 8-K filed with the Securities and Exchange Commission (SEC) on June 9, 2025 (the Prior 8-K), on June 5, 2025"
+    },
+    {
+      "company": "NUCOR CORP",
+      "form": "8-K/A",
+      "filed_date": "20250620",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/73309/000119312525143135/0001193125-25-143135-index.htm",
+      "materialImpactOrReasonablyLikelyMaterialImpact": "The cybersecurity incident has not had a material impact, and is not reasonably likely to have a material impact, on the Companys business operations, and has not had a material impact, and is not reasonably likely to have a material impact,on the Companys financial condition…",
+      "nature": "The Companys investigation revealed that a threat actor illegally accessed the Companys information technology systems. The cybersecurity incident resulted in a temporary limitation of access to portions of the Companys information technology applications supporting some aspec…",
+      "scope": "The Companys investigation also determined that the threat actor exfiltrated limited data from the Companys information technology systems. The Company is reviewing and evaluating the impacted data and will carry out any appropriate notifications to potentially affected partie…",
+      "timing": "As disclosed in the Original Form 8-K, the Company recently experienced a cybersecurity incident affecting certain information technology systems used by the Company."
+    },
+    {
+      "company": "ZOOMCAR HOLDINGS, INC.",
+      "form": "8-K",
+      "filed_date": "20250613",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1854275/000121390025054319/0001213900-25-054319-index.htm",
+      "materialImpactOrReasonablyLikelyMaterialImpact": "To date, the incident has not resulted in any material disruption to the Companys operations. However, the Company continues to evaluate the scope and potential impacts of the event, including legal, financial, and reputational considerations, as well as any associated remedia…",
+      "nature": "On June 9, 2025, Zoomcar Holdings, Inc. (the Company) identified a cybersecurity incident involving unauthorized access to its information systems. The Company became aware of the incident after certain employees received external communications from a threat actor alleging un…"
+    },
+    {
+      "company": "COINBASE GLOBAL, INC.",
+      "form": "8-K",
+      "filed_date": "20250515",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1679788/000167978825000094/0001679788-25-000094-index.htm",
+      "materialImpactOrReasonablyLikelyMaterialImpact": ".",
+      "nature": ":  Name, address, phone, and email;  Masked Social Security (last 4 digits only);  Masked bank-account numbers and some bank account identifiers;  Government-ID images (e.g., drivers license, passport);  Account data (balance snapshots and transaction history); and  Limited co…"
+    },
+    {
+      "company": "NUCOR CORP",
+      "form": "8-K",
+      "filed_date": "20250514",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/73309/000119312525119311/0001193125-25-119311-index.htm",
+      "materialImpactOrReasonablyLikelyMaterialImpact": "As the investigation of the incident is ongoing, the Company will continue to monitor the timing and materiality of the incident.",
+      "nature": "Nucor Corporation (the Company) recently identified a cybersecurity incident involving unauthorized third party access to certain information technology systems used by the Company. Upon detecting the incident, the Company began promptly taking steps to contain and respond to…",
+      "scope": "As of the date of this filing and in an abundance of caution, the Company temporarily and proactively halted certain production operations at various locations. However, the Company is currently in the process of restarting the affected operations.",
+      "timing": "Nucor Corporation (the Company) recently identified a cybersecurity incident involving unauthorized third party access to certain information technology systems used by the Company."
+    },
+    {
+      "company": "CONDUENT INC",
+      "form": "8-K",
+      "filed_date": "20250414",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1677703/000167770325000067/0001677703-25-000067-index.htm",
+      "materialImpactOrReasonablyLikelyMaterialImpact": "While the Company did not experience material impacts to its operating environment or costs from the event itself, the Company has incurred and accrued material non-recurring expenses in the first quarter related to the event based on potential notification requirements. The C…",
+      "nature": "\"On January 13, 2025, Conduent Incorporated (the \"\"Company\"\") experienced an operational disruption and learned that a threat actor gained unauthorized access to a limited portion of the Companys environment. Upon detection, the Company activated its cybersecurity response pla…",
+      "scope": "The disruption did not have a material impact to the Companys operations. As part of its ongoing investigation, the Company determined that the threat actor exfiltrated a set of files associated with a limited number of the Companys clients. Due to the complexity of the files,…",
+      "timing": "\"On January 13, 2025, Conduent Incorporated (the \"\"Company\"\") experienced an operational disruption and learned that a threat actor gained unauthorized access to a limited portion of the Companys environment.\""
+    },
+    {
+      "company": "NATIONAL PRESTO INDUSTRIES INC",
+      "form": "8-K",
+      "filed_date": "20250306",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/80172/000143774925006475/0001437749-25-006475-index.htm",
+      "materialImpactOrReasonablyLikelyMaterialImpact": "While the full scope of the impact is not yet known, the incident could have the potentialto have a material impact on the Registrants financial condition andresults of operations. The Registrant is continuing its forensic investigation and analysis to assess the potential imp…",
+      "nature": "The Registrant is actively conducting a forensic analysis to determine the nature, scope and impact of the incident. At this time, no conclusive evidence has been identified, but the investigation remains ongoing.",
+      "scope": "The incident has temporarily impacted the Registrants operations, including shipping and receiving, some manufacturing processes, and various other back office functions, much of which are in the process of being restored. The Registrant hasimplemented temporary measures to ma…",
+      "timing": "On March 1, 2025, the Registrant experienced a system outage caused by a cybersecurity incident. Upon discovery, the Registrant activated its incident response team, comprised of internal personnel and external cybersecurity experts retained to assist in addressing the incident."
+    }
+  ],
   "periods": [
     {
       "period": "2024q3",
@@ -118,208 +416,6 @@
     {
       "form": "8-K/A",
       "n": 4
-    }
-  ],
-  "by_fiscal_year": [
-    {
-      "fy": 2023,
-      "n": 22
-    },
-    {
-      "fy": 2024,
-      "n": 5464
-    },
-    {
-      "fy": 2025,
-      "n": 6081
-    },
-    {
-      "fy": 2026,
-      "n": 167
-    }
-  ],
-  "by_country_inc": [
-    {
-      "country": "US",
-      "n": 8387
-    },
-    {
-      "country": "US/blank",
-      "n": 1190
-    },
-    {
-      "country": "KY",
-      "n": 906
-    },
-    {
-      "country": "CA",
-      "n": 218
-    },
-    {
-      "country": "IL",
-      "n": 172
-    },
-    {
-      "country": "VG",
-      "n": 125
-    },
-    {
-      "country": "GB",
-      "n": 104
-    },
-    {
-      "country": "BM",
-      "n": 94
-    },
-    {
-      "country": "NL",
-      "n": 64
-    },
-    {
-      "country": "MH",
-      "n": 59
-    },
-    {
-      "country": "IE",
-      "n": 50
-    },
-    {
-      "country": "CH",
-      "n": 43
-    },
-    {
-      "country": "BR",
-      "n": 26
-    },
-    {
-      "country": "AU",
-      "n": 26
-    },
-    {
-      "country": "FR",
-      "n": 22
-    },
-    {
-      "country": "SG",
-      "n": 20
-    },
-    {
-      "country": "MX",
-      "n": 20
-    },
-    {
-      "country": "LU",
-      "n": 18
-    },
-    {
-      "country": "CN",
-      "n": 18
-    },
-    {
-      "country": "JP",
-      "n": 17
-    },
-    {
-      "country": "HK",
-      "n": 17
-    },
-    {
-      "country": "JE",
-      "n": 13
-    },
-    {
-      "country": "AR",
-      "n": 12
-    },
-    {
-      "country": "KR",
-      "n": 11
-    },
-    {
-      "country": "BE",
-      "n": 11
-    }
-  ],
-  "top_sic": [
-    {
-      "sic": "2834",
-      "n": 1073
-    },
-    {
-      "sic": "6798",
-      "n": 501
-    },
-    {
-      "sic": "7372",
-      "n": 485
-    },
-    {
-      "sic": "6770",
-      "n": 404
-    },
-    {
-      "sic": "6022",
-      "n": 353
-    },
-    {
-      "sic": "2836",
-      "n": 337
-    },
-    {
-      "sic": "3841",
-      "n": 270
-    },
-    {
-      "sic": "7389",
-      "n": 232
-    },
-    {
-      "sic": "6199",
-      "n": 231
-    },
-    {
-      "sic": "1311",
-      "n": 185
-    },
-    {
-      "sic": "3674",
-      "n": 185
-    },
-    {
-      "sic": "6221",
-      "n": 181
-    },
-    {
-      "sic": "6021",
-      "n": 179
-    },
-    {
-      "sic": "7374",
-      "n": 162
-    },
-    {
-      "sic": "7370",
-      "n": 158
-    },
-    {
-      "sic": "4911",
-      "n": 124
-    },
-    {
-      "sic": "6331",
-      "n": 113
-    },
-    {
-      "sic": "6282",
-      "n": 111
-    },
-    {
-      "sic": "6500",
-      "n": 98
-    },
-    {
-      "sic": "7373",
-      "n": 86
     }
   ],
   "flags": [

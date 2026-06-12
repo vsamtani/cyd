@@ -48,35 +48,169 @@ async function writeCsv(
 
 // ---- Pre-aggregated summary for the dashboard ------------------------------
 
+/** The "materially affected or reasonably likely to" boolean flag. */
+const MATERIALITY_TAG =
+  "CybersecurityRiskMateriallyAffectedOrReasonablyLikelyToMateriallyAffectRegistrantFlag";
+
+/**
+ * CTE that reduces filings to the population we report on:
+ * annual filings (10-K/20-F + amendments), one row per company×fiscal-year
+ * (latest accession), joined to that filing's materiality flag (1/0/NULL).
+ */
+const ANNUAL_CTE = `
+  WITH annual AS (
+    SELECT adsh, cik, fy, sic, pubfloatusd,
+           CASE WHEN form LIKE '20-F%' THEN '20-F' ELSE '10-K' END AS form_class,
+           ROW_NUMBER() OVER (PARTITION BY cik, fy
+                              ORDER BY filed_date DESC, adsh DESC) AS rn
+    FROM filings
+    WHERE form IN ('10-K','10-K/A','20-F','20-F/A') AND fy IS NOT NULL
+  ),
+  latest AS (SELECT * FROM annual WHERE rn = 1),
+  mat AS (
+    SELECT adsh, MAX(flag_value) AS mat
+    FROM cyd_facts
+    WHERE tag = '${MATERIALITY_TAG}'
+    GROUP BY adsh
+  ),
+  pop AS (
+    SELECT l.*, m.mat
+    FROM latest l LEFT JOIN mat m ON m.adsh = l.adsh
+  )
+`;
+
+// SIC-division labels (first two digits) — accurate, readable sector grouping.
+function sicDivision(sic: string | null): string {
+  const n = sic ? parseInt(sic.slice(0, 2), 10) : NaN;
+  if (Number.isNaN(n)) return "Unclassified";
+  if (n <= 9) return "Agriculture, Forestry & Fishing";
+  if (n <= 14) return "Mining";
+  if (n <= 17) return "Construction";
+  if (n <= 39) return "Manufacturing";
+  if (n <= 49) return "Transportation & Utilities";
+  if (n <= 51) return "Wholesale Trade";
+  if (n <= 59) return "Retail Trade";
+  if (n <= 67) return "Finance, Insurance & Real Estate";
+  if (n <= 89) return "Services";
+  return "Public Administration / Other";
+}
+
+interface SectorRow { sic: string; yes: number; no: number; na: number }
+interface IncidentFactRow {
+  adsh: string; company_name: string; form: string; filed_date: string;
+  filing_url: string; tag: string; value: string;
+}
+
 function buildSummary(db: DB): unknown {
   const one = <T>(sql: string): T => db.prepare(sql).get() as T;
   const many = <T>(sql: string): T[] => db.prepare(sql).all() as T[];
 
+  const rate = (yes: number, no: number): number | null =>
+    yes + no === 0 ? null : +(yes / (yes + no)).toFixed(4);
+
+  // --- Materiality, over the deduped annual population ---
+  const matOverall = one<{ yes: number; no: number; na: number; pop: number }>(`
+    ${ANNUAL_CTE}
+    SELECT SUM(mat=1) AS yes, SUM(mat=0) AS no,
+           SUM(mat IS NULL) AS na, COUNT(*) AS pop FROM pop
+  `);
+
+  const matByFy = many<{ fy: number; yes: number; no: number; na: number }>(`
+    ${ANNUAL_CTE}
+    SELECT fy, SUM(mat=1) AS yes, SUM(mat=0) AS no, SUM(mat IS NULL) AS na
+    FROM pop GROUP BY fy ORDER BY fy
+  `).map((r) => ({ ...r, total: r.yes + r.no, rate: rate(r.yes, r.no) }));
+
+  const matByForm = many<{ form_class: string; yes: number; no: number }>(`
+    ${ANNUAL_CTE}
+    SELECT form_class, SUM(mat=1) AS yes, SUM(mat=0) AS no
+    FROM pop GROUP BY form_class ORDER BY form_class
+  `).map((r) => ({
+    form: r.form_class,
+    label: r.form_class === "20-F" ? "Foreign (20-F)" : "US domestic (10-K)",
+    yes: r.yes, no: r.no, rate: rate(r.yes, r.no),
+  }));
+
+  // Aggregate sectors in JS so we can apply SIC-division labels.
+  const sectorAgg = new Map<string, { yes: number; no: number; na: number }>();
+  for (const r of many<SectorRow>(`
+    ${ANNUAL_CTE}
+    SELECT COALESCE(sic,'') AS sic, SUM(mat=1) AS yes, SUM(mat=0) AS no,
+           SUM(mat IS NULL) AS na
+    FROM pop GROUP BY sic
+  `)) {
+    const div = sicDivision(r.sic || null);
+    const cur = sectorAgg.get(div) ?? { yes: 0, no: 0, na: 0 };
+    cur.yes += r.yes; cur.no += r.no; cur.na += r.na;
+    sectorAgg.set(div, cur);
+  }
+  const matBySector = [...sectorAgg.entries()]
+    .map(([sector, v]) => ({
+      sector, yes: v.yes, no: v.no, total: v.yes + v.no, rate: rate(v.yes, v.no),
+    }))
+    .filter((r) => r.total >= 30) // suppress tiny, noisy cells
+    .sort((a, b) => (b.rate ?? 0) - (a.rate ?? 0));
+
+  // --- Material-incident feed (events with a disclosed incident nature) ---
+  const SNIP = (s: string) =>
+    s.length > 280 ? s.slice(0, 277).trimEnd() + "…" : s;
+  // Restrict to 8-K Item 1.05 reports — the SEC's mechanism for reporting an
+  // actual material incident. Annual reports (10-K/20-F) often tag the same
+  // incident elements with "no incident"/boilerplate text, so we exclude them
+  // to keep this a feed of genuine events.
+  const incidentMap = new Map<string, Record<string, string>>();
+  for (const r of many<IncidentFactRow>(`
+    SELECT f.adsh, f.company_name, f.form, f.filed_date, f.filing_url, c.tag, c.value
+    FROM filings f JOIN cyd_facts c ON c.adsh = f.adsh
+    WHERE f.form IN ('8-K','8-K/A')
+      AND c.tag LIKE 'MaterialCybersecurityIncident%' AND c.value <> ''
+    ORDER BY f.filed_date DESC
+  `)) {
+    const it = incidentMap.get(r.adsh) ?? {
+      company: r.company_name, form: r.form, filed_date: r.filed_date,
+      filing_url: r.filing_url,
+    };
+    const key = r.tag
+      .replace(/^MaterialCybersecurityIncident/, "")
+      .replace(/TextBlock$/, "");
+    it[key.charAt(0).toLowerCase() + key.slice(1)] = SNIP(r.value);
+    incidentMap.set(r.adsh, it);
+  }
+  const incidents = [...incidentMap.values()]
+    .sort((a, b) => (b.filed_date ?? "").localeCompare(a.filed_date ?? ""))
+    .slice(0, 40);
+
+  const coverage = one<{ min: string; max: string }>(
+    "SELECT MIN(filed_date) min, MAX(filed_date) max FROM filings",
+  );
+
   return {
     generated_at: new Date().toISOString(),
     source: "SEC EDGAR Financial Statement and Notes Data Sets (cyd: taxonomy)",
+    coverage: { first_filed: coverage.min, last_filed: coverage.max },
     totals: {
       filings: one<{ n: number }>("SELECT COUNT(*) n FROM filings").n,
       facts: one<{ n: number }>("SELECT COUNT(*) n FROM cyd_facts").n,
-      companies: one<{ n: number }>(
-        "SELECT COUNT(DISTINCT cik) n FROM filings",
-      ).n,
+      companies: one<{ n: number }>("SELECT COUNT(DISTINCT cik) n FROM filings").n,
+      annual_population: matOverall.pop,
       tags: one<{ n: number }>("SELECT COUNT(*) n FROM cyd_tags").n,
     },
+    materiality: {
+      tag: MATERIALITY_TAG,
+      overall: {
+        yes: matOverall.yes, no: matOverall.no, not_disclosed: matOverall.na,
+        rate: rate(matOverall.yes, matOverall.no),
+      },
+      by_fiscal_year: matByFy,
+      by_form: matByForm,
+      by_sector: matBySector,
+    },
+    incidents,
     periods: many(
       "SELECT period, filings_count AS filings, facts_count AS facts FROM ingested_periods ORDER BY period",
     ),
     by_form: many("SELECT form, COUNT(*) n FROM filings GROUP BY form ORDER BY n DESC"),
-    by_fiscal_year: many(
-      "SELECT fy, COUNT(*) n FROM filings WHERE fy IS NOT NULL GROUP BY fy ORDER BY fy",
-    ),
-    by_country_inc: many(
-      "SELECT COALESCE(NULLIF(country_inc,''),'US/blank') AS country, COUNT(*) n FROM filings GROUP BY country ORDER BY n DESC LIMIT 25",
-    ),
-    top_sic: many(
-      "SELECT sic, COUNT(*) n FROM filings WHERE sic IS NOT NULL AND sic<>'' GROUP BY sic ORDER BY n DESC LIMIT 20",
-    ),
-    // Yes/No disclosure rates per boolean cyd tag — the core dashboard metric.
+    // Yes/No rates per boolean cyd tag — feeds the (later) governance scorecard.
     flags: many(`
       SELECT c.tag,
              MAX(t.label) AS label,
