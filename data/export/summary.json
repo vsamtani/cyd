@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-12T13:57:31.177Z",
+  "generated_at": "2026-06-12T14:33:04.894Z",
   "source": "SEC EDGAR Financial Statement and Notes Data Sets (cyd: taxonomy)",
   "coverage": {
     "first_filed": "20241029",
@@ -142,6 +142,72 @@
         "rate": 0.0476
       }
     ]
+  },
+  "governance": {
+    "flags": [
+      {
+        "tag": "CybersecurityRiskManagementPositionsOrCommitteesResponsibleFlag",
+        "affirmed": 9298,
+        "explicit_no": 76,
+        "base": 11196,
+        "rate": 0.8305
+      },
+      {
+        "tag": "CybersecurityRiskManagementPositionsOrCommitteesResponsibleReportToBoardFlag",
+        "affirmed": 8839,
+        "explicit_no": 66,
+        "base": 11196,
+        "rate": 0.7895
+      },
+      {
+        "tag": "CybersecurityRiskManagementProcessesIntegratedFlag",
+        "affirmed": 9298,
+        "explicit_no": 236,
+        "base": 11196,
+        "rate": 0.8305
+      },
+      {
+        "tag": "CybersecurityRiskManagementThirdPartyEngagedFlag",
+        "affirmed": 9779,
+        "explicit_no": 266,
+        "base": 11196,
+        "rate": 0.8734
+      },
+      {
+        "tag": "CybersecurityRiskThirdPartyOversightAndIdentificationProcessesFlag",
+        "affirmed": 9107,
+        "explicit_no": 178,
+        "base": 11196,
+        "rate": 0.8134
+      }
+    ],
+    "completeness": [
+      {
+        "yes_count": 0,
+        "n": 140
+      },
+      {
+        "yes_count": 1,
+        "n": 758
+      },
+      {
+        "yes_count": 2,
+        "n": 906
+      },
+      {
+        "yes_count": 3,
+        "n": 1004
+      },
+      {
+        "yes_count": 4,
+        "n": 1201
+      },
+      {
+        "yes_count": 5,
+        "n": 7187
+      }
+    ],
+    "completeness_base": 11196
   },
   "incidents": [
     {

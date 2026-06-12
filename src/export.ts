@@ -52,6 +52,16 @@ async function writeCsv(
 const MATERIALITY_TAG =
   "CybersecurityRiskMateriallyAffectedOrReasonablyLikelyToMateriallyAffectRegistrantFlag";
 
+/** The five boolean governance/risk-management flags (the board scorecard). */
+const GOVERNANCE_TAGS = [
+  "CybersecurityRiskManagementProcessesIntegratedFlag",
+  "CybersecurityRiskManagementPositionsOrCommitteesResponsibleFlag",
+  "CybersecurityRiskManagementPositionsOrCommitteesResponsibleReportToBoardFlag",
+  "CybersecurityRiskManagementThirdPartyEngagedFlag",
+  "CybersecurityRiskThirdPartyOversightAndIdentificationProcessesFlag",
+];
+const GOVERNANCE_IN = GOVERNANCE_TAGS.map((t) => `'${t}'`).join(",");
+
 /**
  * CTE that reduces filings to the population we report on:
  * annual filings (10-K/20-F + amendments), one row per company×fiscal-year
@@ -151,6 +161,39 @@ function buildSummary(db: DB): unknown {
     .filter((r) => r.total >= 30) // suppress tiny, noisy cells
     .sort((a, b) => (b.rate ?? 0) - (a.rate ?? 0));
 
+  // --- Governance scorecard ---
+  // Reusable CTE: one row per (annual filing, governance flag) collapsed value.
+  const GOV_FV = `
+    ${ANNUAL_CTE}
+    , fv AS (
+      SELECT c.adsh, c.tag, MAX(c.flag_value) AS v
+      FROM cyd_facts c JOIN latest l ON l.adsh = c.adsh
+      WHERE c.tag IN (${GOVERNANCE_IN}) AND c.flag_value IS NOT NULL
+      GROUP BY c.adsh, c.tag
+    )`;
+
+  // How many of the five governance practices each filer affirms. The base is
+  // companies that disclosed governance at all (≥1 of the five flags).
+  const completeness = many<{ yes_count: number; n: number }>(`
+    ${GOV_FV}, per AS (SELECT adsh, SUM(v=1) AS yes_count FROM fv GROUP BY adsh)
+    SELECT yes_count, COUNT(*) AS n FROM per GROUP BY yes_count ORDER BY yes_count
+  `);
+  const completenessBase = completeness.reduce((a, r) => a + r.n, 0);
+
+  // Per flag: affirmative-disclosure rate over that same base (yes / base).
+  // (Explicit "no" is rare; the meaningful spread is how many companies
+  // affirm each practice vs. stay silent on it.)
+  const govFlags = many<{ tag: string; yes: number; no: number }>(`
+    ${GOV_FV}
+    SELECT tag, SUM(v=1) AS yes, SUM(v=0) AS no FROM fv GROUP BY tag
+  `).map((r) => ({
+    tag: r.tag,
+    affirmed: r.yes,
+    explicit_no: r.no,
+    base: completenessBase,
+    rate: completenessBase ? +(r.yes / completenessBase).toFixed(4) : null,
+  }));
+
   // --- Material-incident feed (events with a disclosed incident nature) ---
   const SNIP = (s: string) =>
     s.length > 280 ? s.slice(0, 277).trimEnd() + "…" : s;
@@ -204,6 +247,11 @@ function buildSummary(db: DB): unknown {
       by_fiscal_year: matByFy,
       by_form: matByForm,
       by_sector: matBySector,
+    },
+    governance: {
+      flags: govFlags,
+      completeness,
+      completeness_base: completenessBase,
     },
     incidents,
     periods: many(

@@ -10,6 +10,8 @@
   --neutral: #7c93a6;     /* "no" / baseline bars */
   --neutral-soft: #e4ebf0;
   --partial: #b9c4cd;     /* incomplete cohorts */
+  --good: #2f6f7e;        /* governance adoption — calm, positive */
+  --good-soft: #d9e7ea;
   --maxw: 940px;
   --radius: 10px;
   font-synthesis: none;
@@ -79,6 +81,16 @@ main { padding: 32px 0 8px; }
 .bar-n { fill: var(--muted); font-size: 11.5px; }
 .axis-line { stroke: var(--line); }
 .axis-tick { fill: var(--muted); font-size: 11px; }
+
+/* Governance scorecard (HTML/CSS bars — text wraps cleanly) */
+.scorecard { display: grid; gap: 18px; }
+.score-row { display: grid; grid-template-columns: 1fr auto; column-gap: 18px; row-gap: 7px; align-items: baseline; }
+.score-label { font-weight: 600; font-size: 15.5px; }
+.score-desc { color: var(--muted); font-size: 13px; margin-top: 2px; max-width: 56ch; }
+.score-val { text-align: right; font-weight: 700; font-size: 18px; color: var(--good); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.score-val small { display: block; font-weight: 500; font-size: 11.5px; color: var(--muted); }
+.score-track { grid-column: 1 / -1; height: 9px; background: var(--good-soft); border-radius: 5px; overflow: hidden; }
+.score-fill { height: 100%; background: var(--good); border-radius: 5px; }
 
 /* Incidents */
 .incidents { display: grid; gap: 14px; }
