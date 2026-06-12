@@ -112,8 +112,21 @@ function renderForm(s) {
 }
 
 function renderSector(s) {
-  const items = s.materiality.by_sector.map((r) => ({ label: r.sector, rate: r.rate, n: r.total }));
-  $("chart-sector").innerHTML = hBars(items, { labelW: 260 });
+  // Plain figures (no bars — these are rates, not progress), largest sectors first.
+  const rows = s.materiality.by_sector; // already sorted by population in the export
+  $("sector-breakdown").innerHTML =
+    `<h3>The same question, broken down by sector — largest sectors first</h3>` +
+    `<div class="sector-grid">` +
+    rows
+      .map(
+        (r) => `<div class="sector-stat">
+          <div class="sector-rate">${pct(r.rate)}</div>
+          <div class="sector-name">${esc(r.sector)}</div>
+          <div class="sector-meta">${num(r.total)} companies</div>
+        </div>`,
+      )
+      .join("") +
+    `</div>`;
 }
 
 // Board-facing labels for the five governance flags.

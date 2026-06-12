@@ -170,7 +170,7 @@ function buildSummary(db: DB): unknown {
       sector, yes: v.yes, no: v.no, total: v.yes + v.no, rate: rate(v.yes, v.no),
     }))
     .filter((r) => r.total >= 30) // suppress tiny, noisy cells
-    .sort((a, b) => (b.rate ?? 0) - (a.rate ?? 0));
+    .sort((a, b) => b.total - a.total); // largest sectors first
 
   // --- Governance scorecard (one row per company, latest filing) ---
   // Reusable CTE: one row per (company, governance flag) collapsed value.

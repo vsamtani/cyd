@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-12T17:25:03.370Z",
+  "generated_at": "2026-06-12T17:35:18.566Z",
   "source": "SEC EDGAR Financial Statement and Notes Data Sets (cyd: taxonomy)",
   "coverage": {
     "first_filed": "20241029",
@@ -72,60 +72,11 @@
     ],
     "by_sector": [
       {
-        "sector": "Agriculture, Forestry & Fishing",
-        "yes": 4,
-        "no": 30,
-        "total": 34,
-        "rate": 0.1176
-      },
-      {
-        "sector": "Retail Trade",
-        "yes": 22,
-        "no": 233,
-        "total": 255,
-        "rate": 0.0863
-      },
-      {
         "sector": "Manufacturing",
         "yes": 185,
         "no": 2019,
         "total": 2204,
         "rate": 0.0839
-      },
-      {
-        "sector": "Unclassified",
-        "yes": 15,
-        "no": 164,
-        "total": 179,
-        "rate": 0.0838
-      },
-      {
-        "sector": "Services",
-        "yes": 91,
-        "no": 1013,
-        "total": 1104,
-        "rate": 0.0824
-      },
-      {
-        "sector": "Mining",
-        "yes": 18,
-        "no": 232,
-        "total": 250,
-        "rate": 0.072
-      },
-      {
-        "sector": "Transportation & Utilities",
-        "yes": 28,
-        "no": 405,
-        "total": 433,
-        "rate": 0.0647
-      },
-      {
-        "sector": "Wholesale Trade",
-        "yes": 7,
-        "no": 114,
-        "total": 121,
-        "rate": 0.0579
       },
       {
         "sector": "Finance, Insurance & Real Estate",
@@ -135,11 +86,60 @@
         "rate": 0.0577
       },
       {
+        "sector": "Services",
+        "yes": 91,
+        "no": 1013,
+        "total": 1104,
+        "rate": 0.0824
+      },
+      {
+        "sector": "Transportation & Utilities",
+        "yes": 28,
+        "no": 405,
+        "total": 433,
+        "rate": 0.0647
+      },
+      {
+        "sector": "Retail Trade",
+        "yes": 22,
+        "no": 233,
+        "total": 255,
+        "rate": 0.0863
+      },
+      {
+        "sector": "Mining",
+        "yes": 18,
+        "no": 232,
+        "total": 250,
+        "rate": 0.072
+      },
+      {
+        "sector": "Unclassified",
+        "yes": 15,
+        "no": 164,
+        "total": 179,
+        "rate": 0.0838
+      },
+      {
+        "sector": "Wholesale Trade",
+        "yes": 7,
+        "no": 114,
+        "total": 121,
+        "rate": 0.0579
+      },
+      {
         "sector": "Construction",
         "yes": 2,
         "no": 71,
         "total": 73,
         "rate": 0.0274
+      },
+      {
+        "sector": "Agriculture, Forestry & Fishing",
+        "yes": 4,
+        "no": 30,
+        "total": 34,
+        "rate": 0.1176
       }
     ]
   },
