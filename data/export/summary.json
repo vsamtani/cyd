@@ -1,0 +1,369 @@
+{
+  "generated_at": "2026-06-12T11:40:16.922Z",
+  "source": "SEC EDGAR Financial Statement and Notes Data Sets (cyd: taxonomy)",
+  "totals": {
+    "filings": 11751,
+    "facts": 146685,
+    "companies": 6829,
+    "tags": 77
+  },
+  "periods": [
+    {
+      "period": "2024q3",
+      "filings": 0,
+      "facts": 0
+    },
+    {
+      "period": "2024q4",
+      "filings": 15,
+      "facts": 191
+    },
+    {
+      "period": "2025_04",
+      "filings": 730,
+      "facts": 7655
+    },
+    {
+      "period": "2025_05",
+      "filings": 250,
+      "facts": 2596
+    },
+    {
+      "period": "2025_06",
+      "filings": 144,
+      "facts": 1450
+    },
+    {
+      "period": "2025_07",
+      "filings": 136,
+      "facts": 1290
+    },
+    {
+      "period": "2025_08",
+      "filings": 161,
+      "facts": 1822
+    },
+    {
+      "period": "2025_09",
+      "filings": 162,
+      "facts": 1595
+    },
+    {
+      "period": "2025_10",
+      "filings": 116,
+      "facts": 1027
+    },
+    {
+      "period": "2025_11",
+      "filings": 179,
+      "facts": 2162
+    },
+    {
+      "period": "2025_12",
+      "filings": 132,
+      "facts": 1429
+    },
+    {
+      "period": "2025q1",
+      "filings": 4215,
+      "facts": 56490
+    },
+    {
+      "period": "2026_01",
+      "filings": 102,
+      "facts": 989
+    },
+    {
+      "period": "2026_02",
+      "filings": 1953,
+      "facts": 27665
+    },
+    {
+      "period": "2026_03",
+      "filings": 2543,
+      "facts": 30934
+    },
+    {
+      "period": "2026_04",
+      "filings": 700,
+      "facts": 7246
+    },
+    {
+      "period": "2026_05",
+      "filings": 213,
+      "facts": 2144
+    }
+  ],
+  "by_form": [
+    {
+      "form": "10-K",
+      "n": 9750
+    },
+    {
+      "form": "20-F",
+      "n": 1793
+    },
+    {
+      "form": "10-K/A",
+      "n": 153
+    },
+    {
+      "form": "20-F/A",
+      "n": 38
+    },
+    {
+      "form": "8-K",
+      "n": 13
+    },
+    {
+      "form": "8-K/A",
+      "n": 4
+    }
+  ],
+  "by_fiscal_year": [
+    {
+      "fy": 2023,
+      "n": 22
+    },
+    {
+      "fy": 2024,
+      "n": 5464
+    },
+    {
+      "fy": 2025,
+      "n": 6081
+    },
+    {
+      "fy": 2026,
+      "n": 167
+    }
+  ],
+  "by_country_inc": [
+    {
+      "country": "US",
+      "n": 8387
+    },
+    {
+      "country": "US/blank",
+      "n": 1190
+    },
+    {
+      "country": "KY",
+      "n": 906
+    },
+    {
+      "country": "CA",
+      "n": 218
+    },
+    {
+      "country": "IL",
+      "n": 172
+    },
+    {
+      "country": "VG",
+      "n": 125
+    },
+    {
+      "country": "GB",
+      "n": 104
+    },
+    {
+      "country": "BM",
+      "n": 94
+    },
+    {
+      "country": "NL",
+      "n": 64
+    },
+    {
+      "country": "MH",
+      "n": 59
+    },
+    {
+      "country": "IE",
+      "n": 50
+    },
+    {
+      "country": "CH",
+      "n": 43
+    },
+    {
+      "country": "BR",
+      "n": 26
+    },
+    {
+      "country": "AU",
+      "n": 26
+    },
+    {
+      "country": "FR",
+      "n": 22
+    },
+    {
+      "country": "SG",
+      "n": 20
+    },
+    {
+      "country": "MX",
+      "n": 20
+    },
+    {
+      "country": "LU",
+      "n": 18
+    },
+    {
+      "country": "CN",
+      "n": 18
+    },
+    {
+      "country": "JP",
+      "n": 17
+    },
+    {
+      "country": "HK",
+      "n": 17
+    },
+    {
+      "country": "JE",
+      "n": 13
+    },
+    {
+      "country": "AR",
+      "n": 12
+    },
+    {
+      "country": "KR",
+      "n": 11
+    },
+    {
+      "country": "BE",
+      "n": 11
+    }
+  ],
+  "top_sic": [
+    {
+      "sic": "2834",
+      "n": 1073
+    },
+    {
+      "sic": "6798",
+      "n": 501
+    },
+    {
+      "sic": "7372",
+      "n": 485
+    },
+    {
+      "sic": "6770",
+      "n": 404
+    },
+    {
+      "sic": "6022",
+      "n": 353
+    },
+    {
+      "sic": "2836",
+      "n": 337
+    },
+    {
+      "sic": "3841",
+      "n": 270
+    },
+    {
+      "sic": "7389",
+      "n": 232
+    },
+    {
+      "sic": "6199",
+      "n": 231
+    },
+    {
+      "sic": "1311",
+      "n": 185
+    },
+    {
+      "sic": "3674",
+      "n": 185
+    },
+    {
+      "sic": "6221",
+      "n": 181
+    },
+    {
+      "sic": "6021",
+      "n": 179
+    },
+    {
+      "sic": "7374",
+      "n": 162
+    },
+    {
+      "sic": "7370",
+      "n": 158
+    },
+    {
+      "sic": "4911",
+      "n": 124
+    },
+    {
+      "sic": "6331",
+      "n": 113
+    },
+    {
+      "sic": "6282",
+      "n": 111
+    },
+    {
+      "sic": "6500",
+      "n": 98
+    },
+    {
+      "sic": "7373",
+      "n": 86
+    }
+  ],
+  "flags": [
+    {
+      "tag": "CybersecurityRiskMateriallyAffectedOrReasonablyLikelyToMateriallyAffectRegistrantFlag",
+      "label": "Cybersecurity Risk Materially Affected or Reasonably Likely to Materially Affect Registrant [Flag]",
+      "yes": 785,
+      "no": 9873,
+      "total": 10659
+    },
+    {
+      "tag": "CybersecurityRiskManagementThirdPartyEngagedFlag",
+      "label": "Cybersecurity Risk Management Third Party Engaged [Flag]",
+      "yes": 9932,
+      "no": 278,
+      "total": 10210
+    },
+    {
+      "tag": "CybersecurityRiskManagementProcessesIntegratedFlag",
+      "label": "Cybersecurity Risk Management Processes Integrated [Flag]",
+      "yes": 9421,
+      "no": 246,
+      "total": 9667
+    },
+    {
+      "tag": "CybersecurityRiskManagementPositionsOrCommitteesResponsibleFlag",
+      "label": "Cybersecurity Risk Management Positions or Committees Responsible [Flag]",
+      "yes": 9512,
+      "no": 78,
+      "total": 9590
+    },
+    {
+      "tag": "CybersecurityRiskThirdPartyOversightAndIdentificationProcessesFlag",
+      "label": "Cybersecurity Risk Third Party Oversight and Identification Processes [Flag]",
+      "yes": 9243,
+      "no": 185,
+      "total": 9428
+    },
+    {
+      "tag": "CybersecurityRiskManagementPositionsOrCommitteesResponsibleReportToBoardFlag",
+      "label": "Cybersecurity Risk Management Positions or Committees Responsible Report to Board [Flag]",
+      "yes": 9022,
+      "no": 68,
+      "total": 9092
+    }
+  ]
+}

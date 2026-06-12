@@ -2,6 +2,7 @@ import { Command } from "commander";
 import { openDb } from "./lib/db.js";
 import { fetchAll } from "./fetchFsn.js";
 import { ingestAll } from "./ingest.js";
+import { exportAll, EXPORT_DIR } from "./export.js";
 
 const program = new Command();
 program
@@ -28,13 +29,32 @@ program
   });
 
 program
+  .command("export")
+  .description("Write text exports (CSV + summary.json) to data/export/")
+  .action(async () => {
+    const db = openDb();
+    try {
+      const r = await exportAll(db);
+      console.log(
+        `Exported to ${EXPORT_DIR}: ${r.filings} filings, ${r.facts} facts (${r.textFacts} text blocks), ${r.tags} tags + summary.json`,
+      );
+    } finally {
+      db.close();
+    }
+  });
+
+program
   .command("pipeline")
-  .description("Fetch then ingest")
+  .description("Fetch, ingest, then export")
   .action(async () => {
     await fetchAll();
     const db = openDb();
     try {
       await ingestAll(db);
+      const r = await exportAll(db);
+      console.log(
+        `Exported ${r.filings} filings, ${r.facts} facts (${r.textFacts} text blocks) to ${EXPORT_DIR}`,
+      );
     } finally {
       db.close();
     }

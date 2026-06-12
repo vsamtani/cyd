@@ -10,6 +10,7 @@
   "scripts": {
     "fetch": "tsx src/cli.ts fetch",
     "ingest": "tsx src/cli.ts ingest",
+    "export": "tsx src/cli.ts export",
     "pipeline": "tsx src/cli.ts pipeline",
     "status": "tsx src/cli.ts status",
     "typecheck": "tsc --noEmit"

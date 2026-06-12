@@ -1,7 +1,14 @@
 node_modules/
+
+# Re-fetchable source cache and the binary build artifact: not version-controlled.
+# (raw zips exceed GitHub's 100MB file limit; the .db is regenerable from raw or export.)
 data/raw/
 data/*.db
 data/*.db-shm
 data/*.db-wal
+
+# data/export/ IS tracked: the compact, public-domain, text dataset that powers
+# the static dashboard and serves as the committed provenance snapshot.
+
 *.log
 .DS_Store
