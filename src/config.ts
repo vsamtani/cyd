@@ -35,10 +35,14 @@ export const START_PERIOD = { year: 2024, quarter: 3 } as const;
 export const ALLOWED_FORMS = new Set([
   "10-K",
   "10-K/A",
+  "10-KT", // transition-period annual report
+  "10-KT/A",
   "20-F",
   "20-F/A",
   "8-K",
   "8-K/A",
+  "6-K", // foreign private issuer current report (8-K equivalent)
+  "6-K/A",
 ]);
 
 /**

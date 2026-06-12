@@ -74,7 +74,7 @@ const ANNUAL_CTE = `
            ROW_NUMBER() OVER (PARTITION BY cik, fy
                               ORDER BY filed_date DESC, adsh DESC) AS rn
     FROM filings
-    WHERE form IN ('10-K','10-K/A','20-F','20-F/A') AND fy IS NOT NULL
+    WHERE form IN ('10-K','10-K/A','10-KT','10-KT/A','20-F','20-F/A') AND fy IS NOT NULL
   ),
   latest AS (SELECT * FROM annual WHERE rn = 1),
   mat AS (
@@ -197,15 +197,15 @@ function buildSummary(db: DB): unknown {
   // --- Material-incident feed (events with a disclosed incident nature) ---
   const SNIP = (s: string) =>
     s.length > 280 ? s.slice(0, 277).trimEnd() + "…" : s;
-  // Restrict to 8-K Item 1.05 reports — the SEC's mechanism for reporting an
-  // actual material incident. Annual reports (10-K/20-F) often tag the same
-  // incident elements with "no incident"/boilerplate text, so we exclude them
-  // to keep this a feed of genuine events.
+  // Restrict to current reports (8-K Item 1.05 for domestic filers; 6-K for
+  // foreign private issuers) — the mechanisms for reporting an actual material
+  // incident. Annual reports (10-K/20-F) often tag the same incident elements
+  // with "no incident"/boilerplate text, so we exclude them here.
   const incidentMap = new Map<string, Record<string, string>>();
   for (const r of many<IncidentFactRow>(`
     SELECT f.adsh, f.company_name, f.form, f.filed_date, f.filing_url, c.tag, c.value
     FROM filings f JOIN cyd_facts c ON c.adsh = f.adsh
-    WHERE f.form IN ('8-K','8-K/A')
+    WHERE f.form IN ('8-K','8-K/A','6-K','6-K/A')
       AND c.tag LIKE 'MaterialCybersecurityIncident%' AND c.value <> ''
     ORDER BY f.filed_date DESC
   `)) {

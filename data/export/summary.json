@@ -1,24 +1,24 @@
 {
-  "generated_at": "2026-06-12T14:33:04.894Z",
+  "generated_at": "2026-06-12T16:33:57.615Z",
   "source": "SEC EDGAR Financial Statement and Notes Data Sets (cyd: taxonomy)",
   "coverage": {
     "first_filed": "20241029",
     "last_filed": "20260529"
   },
   "totals": {
-    "filings": 11751,
-    "facts": 146685,
-    "companies": 6829,
-    "annual_population": 11573,
+    "filings": 11774,
+    "facts": 146944,
+    "companies": 6830,
+    "annual_population": 11587,
     "tags": 77
   },
   "materiality": {
     "tag": "CybersecurityRiskMateriallyAffectedOrReasonablyLikelyToMateriallyAffectRegistrantFlag",
     "overall": {
       "yes": 778,
-      "no": 9724,
-      "not_disclosed": 1071,
-      "rate": 0.0741
+      "no": 9737,
+      "not_disclosed": 1072,
+      "rate": 0.074
     },
     "by_fiscal_year": [
       {
@@ -32,18 +32,18 @@
       {
         "fy": 2024,
         "yes": 367,
-        "no": 4544,
-        "na": 455,
-        "total": 4911,
-        "rate": 0.0747
+        "no": 4551,
+        "na": 456,
+        "total": 4918,
+        "rate": 0.0746
       },
       {
         "fy": 2025,
         "yes": 400,
-        "no": 5020,
+        "no": 5026,
         "na": 599,
-        "total": 5420,
-        "rate": 0.0738
+        "total": 5426,
+        "rate": 0.0737
       },
       {
         "fy": 2026,
@@ -59,8 +59,8 @@
         "form": "10-K",
         "label": "US domestic (10-K)",
         "yes": 604,
-        "no": 8348,
-        "rate": 0.0675
+        "no": 8361,
+        "rate": 0.0674
       },
       {
         "form": "20-F",
@@ -74,23 +74,23 @@
       {
         "sector": "Agriculture, Forestry & Fishing",
         "yes": 9,
-        "no": 44,
-        "total": 53,
-        "rate": 0.1698
+        "no": 46,
+        "total": 55,
+        "rate": 0.1636
       },
       {
         "sector": "Manufacturing",
         "yes": 320,
-        "no": 3501,
-        "total": 3821,
-        "rate": 0.0837
+        "no": 3506,
+        "total": 3826,
+        "rate": 0.0836
       },
       {
         "sector": "Services",
         "yes": 152,
-        "no": 1705,
-        "total": 1857,
-        "rate": 0.0819
+        "no": 1709,
+        "total": 1861,
+        "rate": 0.0817
       },
       {
         "sector": "Mining",
@@ -109,9 +109,9 @@
       {
         "sector": "Unclassified",
         "yes": 23,
-        "no": 294,
-        "total": 317,
-        "rate": 0.0726
+        "no": 295,
+        "total": 318,
+        "rate": 0.0723
       },
       {
         "sector": "Transportation & Utilities",
@@ -123,8 +123,8 @@
       {
         "sector": "Finance, Insurance & Real Estate",
         "yes": 144,
-        "no": 2376,
-        "total": 2520,
+        "no": 2377,
+        "total": 2521,
         "rate": 0.0571
       },
       {
@@ -147,38 +147,38 @@
     "flags": [
       {
         "tag": "CybersecurityRiskManagementPositionsOrCommitteesResponsibleFlag",
-        "affirmed": 9298,
+        "affirmed": 9308,
         "explicit_no": 76,
-        "base": 11196,
-        "rate": 0.8305
+        "base": 11210,
+        "rate": 0.8303
       },
       {
         "tag": "CybersecurityRiskManagementPositionsOrCommitteesResponsibleReportToBoardFlag",
-        "affirmed": 8839,
+        "affirmed": 8849,
         "explicit_no": 66,
-        "base": 11196,
-        "rate": 0.7895
+        "base": 11210,
+        "rate": 0.7894
       },
       {
         "tag": "CybersecurityRiskManagementProcessesIntegratedFlag",
-        "affirmed": 9298,
-        "explicit_no": 236,
-        "base": 11196,
-        "rate": 0.8305
+        "affirmed": 9308,
+        "explicit_no": 237,
+        "base": 11210,
+        "rate": 0.8303
       },
       {
         "tag": "CybersecurityRiskManagementThirdPartyEngagedFlag",
-        "affirmed": 9779,
+        "affirmed": 9790,
         "explicit_no": 266,
-        "base": 11196,
-        "rate": 0.8734
+        "base": 11210,
+        "rate": 0.8733
       },
       {
         "tag": "CybersecurityRiskThirdPartyOversightAndIdentificationProcessesFlag",
-        "affirmed": 9107,
+        "affirmed": 9115,
         "explicit_no": 178,
-        "base": 11196,
-        "rate": 0.8134
+        "base": 11210,
+        "rate": 0.8131
       }
     ],
     "completeness": [
@@ -188,26 +188,26 @@
       },
       {
         "yes_count": 1,
-        "n": 758
+        "n": 761
       },
       {
         "yes_count": 2,
-        "n": 906
+        "n": 908
       },
       {
         "yes_count": 3,
-        "n": 1004
+        "n": 1005
       },
       {
         "yes_count": 4,
-        "n": 1201
+        "n": 1202
       },
       {
         "yes_count": 5,
-        "n": 7187
+        "n": 7194
       }
     ],
-    "completeness_base": 11196
+    "completeness_base": 11210
   },
   "incidents": [
     {
@@ -369,6 +369,15 @@
       "nature": "The Registrant is actively conducting a forensic analysis to determine the nature, scope and impact of the incident. At this time, no conclusive evidence has been identified, but the investigation remains ongoing.",
       "scope": "The incident has temporarily impacted the Registrants operations, including shipping and receiving, some manufacturing processes, and various other back office functions, much of which are in the process of being restored. The Registrant hasimplemented temporary measures to ma…",
       "timing": "On March 1, 2025, the Registrant experienced a system outage caused by a cybersecurity incident. Upon discovery, the Registrant activated its incident response team, comprised of internal personnel and external cybersecurity experts retained to assist in addressing the incident."
+    },
+    {
+      "company": "GENIUS GROUP LTD",
+      "form": "6-K",
+      "filed_date": "20241230",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1847806/000149315224052394/0001493152-24-052394-index.htm",
+      "informationNotAvailableOrUndetermined": "While we face a number of ongoing cybersecurity risks in connection with our business, such risks have not materially affected us to date, including our business strategy, results of operations, or financial condition.",
+      "nature": "Cybersecurity risk management is one component of our information security program that guides continuous improvement to, and evaluates the confidentiality, integrity, and availability of our critical systems, data, and operations. Our approach to controls and risk management…",
+      "scope": "Identifying cybersecurity risks that could impact our facilities, third-party vendors/partners, operations, critical systems, information, and broader enterprise IT environment. Risks are informed by threat intelligence, current and historical adversarial activity, and industr…"
     }
   ],
   "periods": [
@@ -379,18 +388,18 @@
     },
     {
       "period": "2024q4",
-      "filings": 15,
-      "facts": 191
+      "filings": 16,
+      "facts": 194
     },
     {
       "period": "2025_04",
-      "filings": 730,
-      "facts": 7655
+      "filings": 731,
+      "facts": 7670
     },
     {
       "period": "2025_05",
-      "filings": 250,
-      "facts": 2596
+      "filings": 251,
+      "facts": 2604
     },
     {
       "period": "2025_06",
@@ -399,13 +408,13 @@
     },
     {
       "period": "2025_07",
-      "filings": 136,
-      "facts": 1290
+      "filings": 137,
+      "facts": 1297
     },
     {
       "period": "2025_08",
-      "filings": 161,
-      "facts": 1822
+      "filings": 163,
+      "facts": 1844
     },
     {
       "period": "2025_09",
@@ -419,8 +428,8 @@
     },
     {
       "period": "2025_11",
-      "filings": 179,
-      "facts": 2162
+      "filings": 181,
+      "facts": 2190
     },
     {
       "period": "2025_12",
@@ -429,8 +438,8 @@
     },
     {
       "period": "2025q1",
-      "filings": 4215,
-      "facts": 56490
+      "filings": 4221,
+      "facts": 56556
     },
     {
       "period": "2026_01",
@@ -439,18 +448,18 @@
     },
     {
       "period": "2026_02",
-      "filings": 1953,
-      "facts": 27665
+      "filings": 1955,
+      "facts": 27695
     },
     {
       "period": "2026_03",
-      "filings": 2543,
-      "facts": 30934
+      "filings": 2549,
+      "facts": 31010
     },
     {
       "period": "2026_04",
-      "filings": 700,
-      "facts": 7246
+      "filings": 701,
+      "facts": 7250
     },
     {
       "period": "2026_05",
@@ -476,56 +485,64 @@
       "n": 38
     },
     {
+      "form": "10-KT",
+      "n": 22
+    },
+    {
       "form": "8-K",
       "n": 13
     },
     {
       "form": "8-K/A",
       "n": 4
+    },
+    {
+      "form": "6-K",
+      "n": 1
     }
   ],
   "flags": [
     {
       "tag": "CybersecurityRiskMateriallyAffectedOrReasonablyLikelyToMateriallyAffectRegistrantFlag",
       "label": "Cybersecurity Risk Materially Affected or Reasonably Likely to Materially Affect Registrant [Flag]",
-      "yes": 785,
-      "no": 9873,
-      "total": 10659
+      "yes": 786,
+      "no": 9893,
+      "total": 10680
     },
     {
       "tag": "CybersecurityRiskManagementThirdPartyEngagedFlag",
       "label": "Cybersecurity Risk Management Third Party Engaged [Flag]",
-      "yes": 9932,
+      "yes": 9949,
       "no": 278,
-      "total": 10210
+      "total": 10227
     },
     {
       "tag": "CybersecurityRiskManagementProcessesIntegratedFlag",
       "label": "Cybersecurity Risk Management Processes Integrated [Flag]",
-      "yes": 9421,
-      "no": 246,
-      "total": 9667
+      "yes": 9437,
+      "no": 247,
+      "total": 9684
     },
     {
       "tag": "CybersecurityRiskManagementPositionsOrCommitteesResponsibleFlag",
       "label": "Cybersecurity Risk Management Positions or Committees Responsible [Flag]",
-      "yes": 9512,
+      "yes": 9528,
       "no": 78,
-      "total": 9590
+      "total": 9606
     },
     {
       "tag": "CybersecurityRiskThirdPartyOversightAndIdentificationProcessesFlag",
       "label": "Cybersecurity Risk Third Party Oversight and Identification Processes [Flag]",
-      "yes": 9243,
+      "yes": 9258,
       "no": 185,
-      "total": 9428
+      "total": 9443
     },
     {
       "tag": "CybersecurityRiskManagementPositionsOrCommitteesResponsibleReportToBoardFlag",
       "label": "Cybersecurity Risk Management Positions or Committees Responsible Report to Board [Flag]",
-      "yes": 9022,
+      "yes": 9038,
       "no": 68,
-      "total": 9092
+      "total": 9108
     }
   ]
 }
