@@ -4,6 +4,7 @@ import { fetchAll } from "./fetchFsn.js";
 import { ingestAll } from "./ingest.js";
 import { exportAll, EXPORT_DIR } from "./export.js";
 import { processIncidents } from "./incidents.js";
+import { computeMarketCaps } from "./marketcap.js";
 import { buildSite } from "./buildSite.js";
 
 const program = new Command();
@@ -53,6 +54,22 @@ program
     try {
       const n = await processIncidents(db);
       console.log(`Processed ${n} incident filing(s) -> ${EXPORT_DIR}/incidents`);
+    } finally {
+      db.close();
+    }
+  });
+
+program
+  .command("marketcap")
+  .description("Estimate each company's market cap (shares x Stooq year-end price)")
+  .action(async () => {
+    const db = openDb();
+    try {
+      const r = await computeMarketCaps(db);
+      console.log(
+        `Priced ${r.priced} of ${r.population} US-domestic companies` +
+          ` (${r.droppedOutliers} dropped as scaling outliers)`,
+      );
     } finally {
       db.close();
     }

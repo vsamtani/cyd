@@ -69,6 +69,20 @@ CREATE TABLE IF NOT EXISTS cyd_facts (
 CREATE INDEX IF NOT EXISTS idx_cyd_facts_tag  ON cyd_facts(tag);
 CREATE INDEX IF NOT EXISTS idx_cyd_facts_adsh ON cyd_facts(adsh);
 
+-- Estimated market capitalisation per company, as of its latest fiscal
+-- year-end: shares outstanding (dei, from the filing) x Stooq close price on or
+-- before that date. Populated by src/marketcap.ts.
+CREATE TABLE IF NOT EXISTS market_cap (
+  cik            INTEGER PRIMARY KEY,
+  adsh           TEXT,    -- the filing the shares came from
+  ticker         TEXT,
+  yearend        TEXT,    -- fiscal year-end date (YYYYMMDD)
+  shares         REAL,    -- total common shares outstanding (summed over classes)
+  price          REAL,    -- Stooq close (USD)
+  price_date     TEXT,    -- actual trading date used (<= yearend)
+  market_cap_usd REAL
+);
+
 -- Bookkeeping: which FSN dataset periods have been ingested.
 CREATE TABLE IF NOT EXISTS ingested_periods (
   period         TEXT PRIMARY KEY,  -- 2025_06 or 2025q1
