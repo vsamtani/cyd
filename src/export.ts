@@ -4,6 +4,7 @@ import { once } from "node:events";
 import { join } from "node:path";
 import { DATA_DIR } from "./config.js";
 import type { DB } from "./lib/db.js";
+import { SIZE_BANDS, bandFor } from "./bands.js";
 
 /** Directory for committed, text-based exports (tracked in git; feeds the static site). */
 export const EXPORT_DIR = join(DATA_DIR, "export");
@@ -172,6 +173,37 @@ function buildSummary(db: DB): unknown {
     .filter((r) => r.total >= 30) // suppress tiny, noisy cells
     .sort((a, b) => b.total - a.total); // largest sectors first
 
+  // --- Materiality by market-cap band: POPULATION 2 ONLY ---
+  // INNER JOIN to market_cap drops every company without a calculated market
+  // cap for its date — we never assume or impute size (see roadmap rule).
+  const sizeRows = many<{ mat: number | null; mcap: number }>(`
+    ${ANNUAL_CTE}
+    SELECT pc.mat AS mat, mc.market_cap_usd AS mcap
+    FROM pop_co pc JOIN market_cap mc ON mc.cik = pc.cik
+  `);
+  const bandAgg = new Map<string, { companies: number; yes: number; no: number }>();
+  for (const b of SIZE_BANDS) bandAgg.set(b.label, { companies: 0, yes: 0, no: 0 });
+  for (const r of sizeRows) {
+    const b = bandFor(r.mcap);
+    if (!b) continue;
+    const cell = bandAgg.get(b.label)!;
+    cell.companies++;
+    if (r.mat === 1) cell.yes++;
+    else if (r.mat === 0) cell.no++;
+  }
+  const matBySize = SIZE_BANDS.map((b) => {
+    const c = bandAgg.get(b.label)!;
+    return {
+      label: b.label,
+      min: b.min,
+      max: Number.isFinite(b.max) ? b.max : null, // JSON has no Infinity
+      companies: c.companies,
+      yes: c.yes,
+      no: c.no,
+      rate: rate(c.yes, c.no),
+    };
+  });
+
   // --- Governance scorecard (one row per company, latest filing) ---
   // Reusable CTE: one row per (company, governance flag) collapsed value.
   const GOV_FV = `
@@ -260,6 +292,7 @@ function buildSummary(db: DB): unknown {
       by_yearend: matByYearEnd,
       by_form: matByForm,
       by_sector: matBySector,
+      by_size: { priced: sizeRows.length, bands: matBySize },
     },
     governance: {
       flags: govFlags,

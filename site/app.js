@@ -9,6 +9,12 @@ const esc = (s) =>
   );
 const pct = (r) => (r == null ? "—" : (r * 100).toFixed(1) + "%");
 const num = (n) => Number(n).toLocaleString("en-GB");
+const fmtUsd = (n) =>
+  n >= 1e9
+    ? "$" + (n / 1e9).toLocaleString("en-GB", { maximumFractionDigits: 1 }) + "B"
+    : n >= 1e6
+      ? "$" + Math.round(n / 1e6) + "M"
+      : "$" + num(n);
 
 function ymd(s) {
   if (!s || s.length !== 8) return s || "";
@@ -190,6 +196,27 @@ function renderCompleteness(s) {
   }
 }
 
+function renderSize(s) {
+  const sz = s.materiality.by_size;
+  const range = (b) =>
+    b.max == null ? fmtUsd(b.min) + "+"
+      : b.min === 0 ? "< " + fmtUsd(b.max)
+        : fmtUsd(b.min) + "–" + fmtUsd(b.max);
+  $("size-grid").innerHTML = sz.bands
+    .map(
+      (b) => `<div class="sector-stat">
+        <div class="sector-rate">${pct(b.rate)}</div>
+        <div class="sector-name">${esc(b.label)}</div>
+        <div class="sector-meta">${esc(range(b))} · ${num(b.companies)} cos.</div>
+      </div>`,
+    )
+    .join("");
+  $("size-note").textContent =
+    `Computed only over the ${num(sz.priced)} companies for which we calculated a market cap ` +
+    `as of their fiscal year-end. Companies without a calculated market cap are excluded here — ` +
+    `no size is assumed for them.`;
+}
+
 const INCIDENT_FIELDS = [
   ["nature", "Nature"],
   ["scope", "Scope"],
@@ -266,6 +293,7 @@ fetch("./data/summary.json")
     renderFy(s);
     renderForm(s);
     renderSector(s);
+    renderSize(s);
     renderGovernance(s);
     renderCompleteness(s);
     renderIncidents(s);
