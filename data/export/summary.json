@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-12T17:35:18.566Z",
+  "generated_at": "2026-06-13T09:57:30.596Z",
   "source": "SEC EDGAR Financial Statement and Notes Data Sets (cyd: taxonomy)",
   "coverage": {
     "first_filed": "20241029",
@@ -211,6 +211,7 @@
   },
   "incidents": [
     {
+      "adsh": "0001079973-26-000721",
       "company": "ONCOLOGY INSTITUTE, INC.",
       "form": "8-K",
       "filed_date": "20260522",
@@ -222,6 +223,7 @@
       "timing": "Because of the Companys technology security and continuity plan, the Company worked swiftly in response, and its operations have continued in all material respects since the detection of the incident. The Company remains committed to protecting the healthcare and other persona…"
     },
     {
+      "adsh": "0001193125-26-149607",
       "company": "STRYKER CORP",
       "form": "8-K/A",
       "filed_date": "20260409",
@@ -233,6 +235,7 @@
       "timing": "the Company has worked diligently, together with third-party experts and law enforcement, to contain and neutralize the impact of the incident and restore operations. The Companys investigation of the incident remains ongoing."
     },
     {
+      "adsh": "0001493152-26-013239",
       "company": "CARECLOUD, INC.",
       "form": "8-K",
       "filed_date": "20260327",
@@ -241,6 +244,7 @@
       "scope": "This Current Report on Form 8-K contains forward-looking statements within the meaning of the federal securities laws, including statements regarding the scope of the incident, whether and to what extent patient information or other data was accessed or exfiltrated, the catego…"
     },
     {
+      "adsh": "0001437749-26-009193",
       "company": "TRIO-TECH INTERNATIONAL",
       "form": "8-K",
       "filed_date": "20260320",
@@ -248,6 +252,7 @@
       "nature": "On March 11, 2026, Trio-Tech International (Company) identified and responded to a cybersecurity incident in one of its subsidiaries (subsidiary) in Singapore. The subsidiary experienced a ransomware incident that resulted in encryption of certain files within the Companys net…"
     },
     {
+      "adsh": "0001683168-26-000732",
       "company": "WYTEC INTERNATIONAL INC",
       "form": "8-K/A",
       "filed_date": "20260203",
@@ -257,6 +262,7 @@
       "scope": "As disclosed in a Current Report on Form 8-K (the Original Report), on August 25, 2025, Wytec International, Inc. (the Company) became aware of a cybersecurity incident in which a bad actor published a defaced website at the Companys web address, wytecintl.com. After the Compa…"
     },
     {
+      "adsh": "0001834584-25-000202",
       "company": "COUPANG, INC.",
       "form": "8-K/A",
       "filed_date": "20251229",
@@ -267,6 +273,7 @@
       "timing": "On December 24, 2025 (PST) and December 28, 2025 (PST), Coupang Corp., a wholly-owned Korean subsidiary (Coupang Corp.) of Coupang, Inc. (Coupang, Inc., our, or we) (Coupang Corp., together with Coupang, Inc. and its subsidiaries and affiliates, Coupang,), issued updates (coll…"
     },
     {
+      "adsh": "0001834584-25-000196",
       "company": "COUPANG, INC.",
       "form": "8-K",
       "filed_date": "20251216",
@@ -277,6 +284,7 @@
       "timing": "On November 18, 2025, Coupang Corp. (Coupang Corp.), a wholly-owned Korean subsidiary of Coupang, Inc. (Coupang Corp., together with Coupang, Inc. (Coupang, Inc., our, or we) and its subsidiaries and affiliates, Coupang,), became aware of a cybersecurity incident involving una…"
     },
     {
+      "adsh": "0001649739-25-000246",
       "company": "BAYFIRST FINANCIAL CORP.",
       "form": "8-K",
       "filed_date": "20251030",
@@ -287,6 +295,7 @@
       "timing": "On August 14, 2025, BayFirst National Bank (BayFirst) was notified of a cybersecurity incident experienced by a third-party provider of marketing services. On October 28, 2025, the third-party provider confirmed that some customer information was exposed by this incident."
     },
     {
+      "adsh": "0001079973-25-001631",
       "company": "JEWETT CAMERON TRADING CO LTD",
       "form": "8-K",
       "filed_date": "20251021",
@@ -295,6 +304,7 @@
       "scope": "On October 15, 2025, Jewett-Cameron Trading Co. Ltd. (the Company) learned that a threat actor had gained unauthorized access to portions of the Companys information technology (IT) environment and claimed to have unlawfully accessed certain Company information and data. The C…"
     },
     {
+      "adsh": "0001683168-25-006583",
       "company": "WYTEC INTERNATIONAL INC",
       "form": "8-K",
       "filed_date": "20250829",
@@ -305,6 +315,7 @@
       "timing": "August 25, 2025"
     },
     {
+      "adsh": "0001020859-25-000036",
       "company": "UNITED NATURAL FOODS INC",
       "form": "8-K",
       "filed_date": "20250626",
@@ -315,6 +326,7 @@
       "timing": "As previously disclosed in a Current Report on Form 8-K filed with the Securities and Exchange Commission (SEC) on June 9, 2025 (the Prior 8-K), on June 5, 2025"
     },
     {
+      "adsh": "0001193125-25-143135",
       "company": "NUCOR CORP",
       "form": "8-K/A",
       "filed_date": "20250620",
@@ -325,6 +337,7 @@
       "timing": "As disclosed in the Original Form 8-K, the Company recently experienced a cybersecurity incident affecting certain information technology systems used by the Company."
     },
     {
+      "adsh": "0001213900-25-054319",
       "company": "ZOOMCAR HOLDINGS, INC.",
       "form": "8-K",
       "filed_date": "20250613",
@@ -333,6 +346,7 @@
       "nature": "On June 9, 2025, Zoomcar Holdings, Inc. (the Company) identified a cybersecurity incident involving unauthorized access to its information systems. The Company became aware of the incident after certain employees received external communications from a threat actor alleging un…"
     },
     {
+      "adsh": "0001679788-25-000094",
       "company": "COINBASE GLOBAL, INC.",
       "form": "8-K",
       "filed_date": "20250515",
@@ -341,6 +355,7 @@
       "nature": ":  Name, address, phone, and email;  Masked Social Security (last 4 digits only);  Masked bank-account numbers and some bank account identifiers;  Government-ID images (e.g., drivers license, passport);  Account data (balance snapshots and transaction history); and  Limited co…"
     },
     {
+      "adsh": "0001193125-25-119311",
       "company": "NUCOR CORP",
       "form": "8-K",
       "filed_date": "20250514",
@@ -351,6 +366,7 @@
       "timing": "Nucor Corporation (the Company) recently identified a cybersecurity incident involving unauthorized third party access to certain information technology systems used by the Company."
     },
     {
+      "adsh": "0001677703-25-000067",
       "company": "CONDUENT INC",
       "form": "8-K",
       "filed_date": "20250414",
@@ -361,6 +377,7 @@
       "timing": "\"On January 13, 2025, Conduent Incorporated (the \"\"Company\"\") experienced an operational disruption and learned that a threat actor gained unauthorized access to a limited portion of the Companys environment.\""
     },
     {
+      "adsh": "0001437749-25-006475",
       "company": "NATIONAL PRESTO INDUSTRIES INC",
       "form": "8-K",
       "filed_date": "20250306",
@@ -371,6 +388,7 @@
       "timing": "On March 1, 2025, the Registrant experienced a system outage caused by a cybersecurity incident. Upon discovery, the Registrant activated its incident response team, comprised of internal personnel and external cybersecurity experts retained to assist in addressing the incident."
     },
     {
+      "adsh": "0001493152-24-052394",
       "company": "GENIUS GROUP LTD",
       "form": "6-K",
       "filed_date": "20241230",

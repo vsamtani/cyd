@@ -221,8 +221,8 @@ function buildSummary(db: DB): unknown {
     ORDER BY f.filed_date DESC
   `)) {
     const it = incidentMap.get(r.adsh) ?? {
-      company: r.company_name, form: r.form, filed_date: r.filed_date,
-      filing_url: r.filing_url,
+      adsh: r.adsh, company: r.company_name, form: r.form,
+      filed_date: r.filed_date, filing_url: r.filing_url,
     };
     const key = r.tag
       .replace(/^MaterialCybersecurityIncident/, "")

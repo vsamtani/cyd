@@ -209,6 +209,11 @@ function renderIncidents(s) {
       const rows = INCIDENT_FIELDS.filter(([k]) => it[k])
         .map(([k, label]) => `<dt>${label}</dt><dd>${esc(it[k])}</dd>`)
         .join("");
+      const adsh = it.adsh ? esc(it.adsh) : "";
+      const fullText = adsh
+        ? `<button class="filing-toggle" data-adsh="${adsh}" aria-expanded="false">Read full filing text ▸</button>
+           <a class="raw-link" href="./data/incidents/${adsh}.raw.html" target="_blank" rel="noopener">original HTML ↗</a>`
+        : "";
       return `
         <article class="incident">
           <div class="ihead">
@@ -216,10 +221,36 @@ function renderIncidents(s) {
             <span class="when">Filed ${ymd(it.filed_date)}</span>
           </div>
           <dl>${rows}</dl>
-          <p><a href="${esc(it.filing_url)}" target="_blank" rel="noopener">View filing on SEC EDGAR →</a></p>
+          <div class="incident-actions">
+            <a href="${esc(it.filing_url)}" target="_blank" rel="noopener">View on SEC EDGAR →</a>
+            ${fullText}
+          </div>
+          <div class="filing-text" hidden></div>
         </article>`;
     })
     .join("");
+
+  host.querySelectorAll(".filing-toggle").forEach((btn) =>
+    btn.addEventListener("click", () => toggleFilingText(btn)),
+  );
+}
+
+async function toggleFilingText(btn) {
+  const box = btn.closest(".incident").querySelector(".filing-text");
+  const open = btn.getAttribute("aria-expanded") === "true";
+  btn.setAttribute("aria-expanded", String(!open));
+  btn.textContent = open ? "Read full filing text ▸" : "Hide filing text ▾";
+  box.hidden = open;
+  if (open || box.dataset.loaded) return;
+  box.innerHTML = '<p class="note">Loading…</p>';
+  try {
+    const r = await fetch(`./data/incidents/${btn.getAttribute("data-adsh")}.clean.html`);
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    box.innerHTML = await r.text(); // sanitised at build time
+    box.dataset.loaded = "1";
+  } catch (e) {
+    box.innerHTML = `<p class="error">Full text unavailable (${esc(e.message)}). Run <code>npm run incidents</code>.</p>`;
+  }
 }
 
 // ---- boot ------------------------------------------------------------------

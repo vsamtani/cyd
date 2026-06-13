@@ -3,6 +3,7 @@ node_modules/
 # Re-fetchable source cache and the binary build artifact: not version-controlled.
 # (raw zips exceed GitHub's 100MB file limit; the .db is regenerable from raw or export.)
 data/raw/
+data/incidents_raw/
 data/*.db
 data/*.db-shm
 data/*.db-wal

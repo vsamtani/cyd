@@ -3,6 +3,7 @@ import { openDb } from "./lib/db.js";
 import { fetchAll } from "./fetchFsn.js";
 import { ingestAll } from "./ingest.js";
 import { exportAll, EXPORT_DIR } from "./export.js";
+import { processIncidents } from "./incidents.js";
 import { buildSite } from "./buildSite.js";
 
 const program = new Command();
@@ -45,6 +46,19 @@ program
   });
 
 program
+  .command("incidents")
+  .description("Fetch incident filings' full text and write raw + sanitised HTML")
+  .action(async () => {
+    const db = openDb();
+    try {
+      const n = await processIncidents(db);
+      console.log(`Processed ${n} incident filing(s) -> ${EXPORT_DIR}/incidents`);
+    } finally {
+      db.close();
+    }
+  });
+
+program
   .command("site")
   .description("Assemble the deployable static dashboard into dist/")
   .action(() => {
@@ -64,6 +78,8 @@ program
       console.log(
         `Exported ${r.filings} filings, ${r.facts} facts (${r.textFacts} text blocks) to ${EXPORT_DIR}`,
       );
+      const n = await processIncidents(db);
+      console.log(`Processed ${n} incident filing(s)`);
     } finally {
       db.close();
     }
