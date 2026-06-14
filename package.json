@@ -1,0 +1,31 @@
+{
+  "name": "cyd",
+  "version": "0.1.0",
+  "description": "Download and ingest SEC 10-K/20-F/8-K cybersecurity (cyd:) iXBRL disclosures from the EDGAR Financial Statement and Notes Data Sets into SQLite.",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "fetch": "tsx src/cli.ts fetch",
+    "ingest": "tsx src/cli.ts ingest",
+    "export": "tsx src/cli.ts export",
+    "incidents": "tsx src/cli.ts incidents",
+    "build:site": "tsx src/cli.ts export && tsx src/cli.ts incidents && tsx src/cli.ts site",
+    "dev": "tsx src/cli.ts site && python3 -m http.server 8000 --directory dist",
+    "pipeline": "tsx src/cli.ts pipeline",
+    "status": "tsx src/cli.ts status",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "commander": "^12.1.0",
+    "yauzl": "^3.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/yauzl": "^2.10.3",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}

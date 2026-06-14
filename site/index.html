@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>US SEC Cybersecurity Disclosures — A Board's-Eye View</title>
+  <meta name="description" content="How US-listed companies disclose the business impact of cyber risk to the SEC — a benchmark for boards." />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <p class="eyebrow">Cyber risk, as the financial regulator sees it</p>
+      <h1>US SEC Cybersecurity Disclosures</h1>
+      <p class="lede">
+        Since December 2024, US-listed companies must tell the SEC — in
+        machine-readable form — how cyber risk affects their business, how their
+        board oversees it, and when a material incident occurs. This is a
+        board's-eye view of what they are saying. It is about
+        <strong>business and financial impact</strong>, not technical metrics.
+      </p>
+      <p id="meta" class="meta">Loading…</p>
+    </div>
+  </header>
+
+  <main class="wrap" id="main">
+    <!-- Hero materiality metric -->
+    <section class="panel hero" id="hero" aria-labelledby="hero-h">
+      <h2 id="hero-h" class="sr-only">Headline materiality metric</h2>
+      <div id="hero-body"></div>
+      <div id="sector-breakdown" class="sector-breakdown"></div>
+    </section>
+
+    <!-- Trend by fiscal year -->
+    <section class="panel" aria-labelledby="trend-h">
+      <h2 id="trend-h">Has it changed over time?</h2>
+      <p class="panel-sub">Share of annual filers reporting a material (or
+        reasonably likely material) cyber impact, grouped by the calendar year in
+        which each company's fiscal year ended.</p>
+      <div id="chart-fy" class="chart"></div>
+      <p class="note" id="fy-note"></p>
+    </section>
+
+    <!-- By issuer type -->
+    <section class="panel" aria-labelledby="form-h">
+      <h2 id="form-h">US domestic vs. foreign issuers</h2>
+      <p class="panel-sub">Foreign private issuers file on Form 20-F; US
+        domestic companies file on Form 10-K.</p>
+      <div id="chart-form" class="chart"></div>
+    </section>
+
+    <!-- Materiality by company size -->
+    <section class="panel" aria-labelledby="size-h">
+      <h2 id="size-h">Does company size matter?</h2>
+      <p class="panel-sub" id="size-sub">Materiality rate by market-cap band, for
+        the companies whose market cap we could calculate as of their year-end.</p>
+      <div id="size-grid" class="sector-grid"></div>
+      <p class="note" id="size-note"></p>
+    </section>
+
+    <!-- Governance scorecard -->
+    <section class="panel" aria-labelledby="gov-h">
+      <h2 id="gov-h">How boards govern cyber risk</h2>
+      <p class="panel-sub">Beyond impact, every filer must describe how cyber risk
+        is governed. Among the <span id="gov-base">…</span> companies that
+        disclosed their arrangements, the share affirming each practice in their
+        latest annual report — a benchmark a board can hold itself against.</p>
+      <div id="scorecard" class="scorecard"></div>
+      <p class="note">Where a bar is high, a board that cannot say "yes" is an
+        outlier. Reporting cyber risk up to the board is the least universal of
+        the five.</p>
+    </section>
+
+    <!-- Governance completeness -->
+    <section class="panel" aria-labelledby="comp-h">
+      <h2 id="comp-h">How complete is the governance picture?</h2>
+      <p class="panel-sub">How many of the five practices each company affirms.
+        A measure of disclosure completeness — not a guarantee of the underlying
+        security.</p>
+      <div id="chart-comp" class="chart"></div>
+      <p class="note" id="comp-note"></p>
+    </section>
+
+    <!-- Incident feed -->
+    <section class="panel" aria-labelledby="inc-h">
+      <h2 id="inc-h">Recently disclosed material incidents</h2>
+      <p class="panel-sub">When a cyber incident is material, companies must
+        file within four business days. These are the most recent disclosures in
+        the dataset — illustrative of what "material" looks like in practice.</p>
+      <div id="incidents" class="incidents"></div>
+      <p class="note">Reflects incidents tagged on US-domestic <strong>8-K</strong>
+        (Item 1.05) reports and any tagged foreign-issuer <strong>6-K</strong>.
+        Foreign private issuers report incidents on Form 6-K, which is rarely
+        structured-tagged, so foreign-issuer incidents are under-represented
+        here.</p>
+    </section>
+
+    <!-- UK context -->
+    <section class="panel context" aria-labelledby="ctx-h">
+      <h2 id="ctx-h">Why this matters for UK boards</h2>
+      <p>The UK has <strong>no equivalent mandatory cyber-disclosure regime</strong>.
+        UK-listed companies are not required to tell investors, in a structured
+        way, whether cyber risk has materially affected them or how the board
+        oversees it. But the underlying business risk is broadly the same on both
+        sides of the Atlantic — and disclosure norms have a habit of crossing it.
+        The US picture is therefore a useful preview: of the questions a board may
+        soon be expected to answer, and of how comparable companies are already
+        answering them.</p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <h2>Method &amp; caveats</h2>
+      <ul class="caveats">
+        <li><strong>This measures disclosure, not security.</strong> A company
+          saying cyber has not materially affected it is a statement to the
+          regulator, not an audited fact about its defences.</li>
+        <li><strong>Population.</strong> Current-state figures (the headline rate,
+          the breakdowns and the governance scorecard) count <strong>each company
+          once</strong>, using its most recent annual report (Forms 10-K / 20-F,
+          incl. amendments). The over-time trend uses every year, one report per
+          company per fiscal year.</li>
+        <li><strong>Denominator.</strong> The materiality rate is among filers
+          that answered the flag (yes ÷ (yes + no)); "not disclosed" filers are
+          shown separately and excluded from the rate.</li>
+        <li><strong>Recent year-ends are incomplete</strong> — filings arrive
+          months after a company's year-end, so the most recent year-end bucket
+          is still filling in and its rate is provisional.</li>
+        <li><strong>Source.</strong> SEC EDGAR Financial Statement and Notes Data
+          Sets (the <code>cyd:</code> Inline-XBRL taxonomy). Self-reported and
+          unaudited. Incident text is truncated by the SEC; follow the link for
+          the full filing.</li>
+      </ul>
+      <p class="updated" id="footer-meta"></p>
+    </div>
+  </footer>
+
+  <script src="./app.js" defer></script>
+</body>
+</html>
