@@ -31,16 +31,30 @@ export SEC_USER_AGENT="your-app your-email@example.com"
 
 ## Usage
 
+Refresh all data, then commit and push to redeploy the dashboard:
+
 ```bash
-npm run fetch      # download all available FSN dataset zips -> data/raw/
-npm run ingest     # parse data/raw/*_notes.zip -> data/cyd.db
-npm run pipeline   # fetch + ingest + print summary
-npm run status     # print a summary of what's in the database
+npm run refresh    # fetch -> ingest -> marketcap -> export -> incidents
+git add data/export && git commit -m "Refresh data" && git push   # -> Pages deploy
 ```
 
-Both `fetch` and `ingest` are **idempotent**: re-running skips already-downloaded
-zips (except the latest period, which is refreshed) and upserts rows so counts
-stay stable. Raw zips are **retained** — see "Data model" below.
+Individual steps:
+
+```bash
+npm run fetch      # download available FSN dataset zips -> data/raw/
+npm run ingest     # parse data/raw/*_notes.zip -> data/cyd.db
+npm run marketcap  # US-domestic market caps (needs data/raw/d_us_txt.zip)
+npm run export     # write data/export/ (CSVs + summary.json)
+npm run incidents  # fetch + sanitise incident filing text -> data/export/incidents/
+npm run status     # summary of the database
+npm run dev        # build dist/ and serve at http://localhost:8000
+```
+
+Steps are **idempotent** and raw zips are **retained** (see "Data model"). The
+dashboard is built from the committed `data/export/` and deployed to GitHub Pages
+on push to `main` (`.github/workflows/deploy.yml`). `marketcap` — and therefore
+`refresh` — needs the Stooq bulk file at `data/raw/d_us_txt.zip` (a manual
+download); the rest of the pipeline works from public SEC data alone.
 
 ## Data model (`data/cyd.db`)
 

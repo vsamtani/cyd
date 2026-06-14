@@ -12,6 +12,8 @@
     "ingest": "tsx src/cli.ts ingest",
     "export": "tsx src/cli.ts export",
     "incidents": "tsx src/cli.ts incidents",
+    "marketcap": "tsx src/cli.ts marketcap",
+    "refresh": "npm run fetch && npm run ingest && npm run marketcap && npm run export && npm run incidents",
     "build:site": "tsx src/cli.ts export && tsx src/cli.ts incidents && tsx src/cli.ts site",
     "dev": "tsx src/cli.ts site && python3 -m http.server 8000 --directory dist",
     "pipeline": "tsx src/cli.ts pipeline",
