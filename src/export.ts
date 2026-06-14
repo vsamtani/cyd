@@ -64,11 +64,13 @@ const GOVERNANCE_TAGS = [
 const GOVERNANCE_IN = GOVERNANCE_TAGS.map((t) => `'${t}'`).join(",");
 
 /**
- * CTE that reduces filings to the population we report on:
- * annual filings (10-K/20-F + amendments), one row per company×fiscal-year
- * (latest accession), joined to that filing's materiality flag (1/0/NULL).
+ * CTE that reduces filings to the population we report on, joined to one boolean
+ * flag's value (`mat` = 1/0/NULL) so the same breakdowns work for ANY flag:
+ *   - `pop`    one row per company × fiscal-year (the time-trend basis)
+ *   - `pop_co` one row per company, latest filing (the current-state basis)
  */
-const ANNUAL_CTE = `
+function annualCte(flagTag: string): string {
+  return `
   WITH annual AS (
     SELECT adsh, cik, fy, sic, pubfloatusd,
            substr(period, 1, 4) AS yend,  -- calendar year of fiscal year-end
@@ -88,7 +90,7 @@ const ANNUAL_CTE = `
   mat AS (
     SELECT adsh, MAX(flag_value) AS mat
     FROM cyd_facts
-    WHERE tag = '${MATERIALITY_TAG}'
+    WHERE tag = '${flagTag}'
     GROUP BY adsh
   ),
   pop AS (        -- multi-year, for the time trend
@@ -98,6 +100,7 @@ const ANNUAL_CTE = `
     SELECT l.*, m.mat FROM latest_co l LEFT JOIN mat m ON m.adsh = l.adsh
   )
 `;
+}
 
 // SIC-division labels (first two digits) — accurate, readable sector grouping.
 function sicDivision(sic: string | null): string {
@@ -128,86 +131,110 @@ function buildSummary(db: DB): unknown {
   const rate = (yes: number, no: number): number | null =>
     yes + no === 0 ? null : +(yes / (yes + no)).toFixed(4);
 
-  // --- Materiality: current state, one row per company (latest filing) ---
-  const matOverall = one<{ yes: number; no: number; na: number; companies: number }>(`
-    ${ANNUAL_CTE}
-    SELECT SUM(mat=1) AS yes, SUM(mat=0) AS no,
-           SUM(mat IS NULL) AS na, COUNT(*) AS companies FROM pop_co
-  `);
+  // Full set of breakdowns for ANY boolean cyd flag, over the deduped
+  // populations. Materiality is just the canonical caller; the identical path
+  // works for any flag tag. (Returned `companies`/`annual_reports` are
+  // population sizes, independent of which flag is passed.)
+  function flagBreakdowns(tag: string) {
+    const cte = annualCte(tag);
 
-  // Bucket by the calendar year of each company's fiscal year-end (the date the
-  // disclosed state is "as of"), not the self-reported fiscal-year integer.
-  const matByYearEnd = many<{ yearend: string; yes: number; no: number; na: number }>(`
-    ${ANNUAL_CTE}
-    SELECT yend AS yearend, SUM(mat=1) AS yes, SUM(mat=0) AS no, SUM(mat IS NULL) AS na
-    FROM pop GROUP BY yend ORDER BY yend
-  `).map((r) => ({ ...r, total: r.yes + r.no, rate: rate(r.yes, r.no) }));
+    // Current state, one row per company (latest filing).
+    const overallRow = one<{ yes: number; no: number; na: number; companies: number }>(`
+      ${cte}
+      SELECT SUM(mat=1) AS yes, SUM(mat=0) AS no,
+             SUM(mat IS NULL) AS na, COUNT(*) AS companies FROM pop_co
+    `);
 
-  const matByForm = many<{ form_class: string; yes: number; no: number }>(`
-    ${ANNUAL_CTE}
-    SELECT form_class, SUM(mat=1) AS yes, SUM(mat=0) AS no
-    FROM pop_co GROUP BY form_class ORDER BY form_class
-  `).map((r) => ({
-    form: r.form_class,
-    label: r.form_class === "20-F" ? "Foreign (20-F)" : "US domestic (10-K)",
-    yes: r.yes, no: r.no, rate: rate(r.yes, r.no),
-  }));
+    // Bucket by the calendar year of each company's fiscal year-end (the date
+    // the disclosed state is "as of"), not the self-reported fiscal-year integer.
+    const by_yearend = many<{ yearend: string; yes: number; no: number; na: number }>(`
+      ${cte}
+      SELECT yend AS yearend, SUM(mat=1) AS yes, SUM(mat=0) AS no, SUM(mat IS NULL) AS na
+      FROM pop GROUP BY yend ORDER BY yend
+    `).map((r) => ({ ...r, total: r.yes + r.no, rate: rate(r.yes, r.no) }));
 
-  // Aggregate sectors in JS so we can apply SIC-division labels.
-  const sectorAgg = new Map<string, { yes: number; no: number; na: number }>();
-  for (const r of many<SectorRow>(`
-    ${ANNUAL_CTE}
-    SELECT COALESCE(sic,'') AS sic, SUM(mat=1) AS yes, SUM(mat=0) AS no,
-           SUM(mat IS NULL) AS na
-    FROM pop_co GROUP BY sic
-  `)) {
-    const div = sicDivision(r.sic || null);
-    const cur = sectorAgg.get(div) ?? { yes: 0, no: 0, na: 0 };
-    cur.yes += r.yes; cur.no += r.no; cur.na += r.na;
-    sectorAgg.set(div, cur);
-  }
-  const matBySector = [...sectorAgg.entries()]
-    .map(([sector, v]) => ({
-      sector, yes: v.yes, no: v.no, total: v.yes + v.no, rate: rate(v.yes, v.no),
-    }))
-    .filter((r) => r.total >= 30) // suppress tiny, noisy cells
-    .sort((a, b) => b.total - a.total); // largest sectors first
+    const by_form = many<{ form_class: string; yes: number; no: number }>(`
+      ${cte}
+      SELECT form_class, SUM(mat=1) AS yes, SUM(mat=0) AS no
+      FROM pop_co GROUP BY form_class ORDER BY form_class
+    `).map((r) => ({
+      form: r.form_class,
+      label: r.form_class === "20-F" ? "Foreign (20-F)" : "US domestic (10-K)",
+      yes: r.yes, no: r.no, rate: rate(r.yes, r.no),
+    }));
 
-  // --- Materiality by market-cap band: POPULATION 2 ONLY ---
-  // INNER JOIN to market_cap drops every company without a calculated market
-  // cap for its date — we never assume or impute size (see roadmap rule).
-  const sizeRows = many<{ mat: number | null; mcap: number }>(`
-    ${ANNUAL_CTE}
-    SELECT pc.mat AS mat, mc.market_cap_usd AS mcap
-    FROM pop_co pc JOIN market_cap mc ON mc.cik = pc.cik
-  `);
-  const bandAgg = new Map<string, { companies: number; yes: number; no: number }>();
-  for (const b of SIZE_BANDS) bandAgg.set(b.label, { companies: 0, yes: 0, no: 0 });
-  for (const r of sizeRows) {
-    const b = bandFor(r.mcap);
-    if (!b) continue;
-    const cell = bandAgg.get(b.label)!;
-    cell.companies++;
-    if (r.mat === 1) cell.yes++;
-    else if (r.mat === 0) cell.no++;
-  }
-  const matBySize = SIZE_BANDS.map((b) => {
-    const c = bandAgg.get(b.label)!;
+    // Aggregate sectors in JS so we can apply SIC-division labels.
+    const sectorAgg = new Map<string, { yes: number; no: number; na: number }>();
+    for (const r of many<SectorRow>(`
+      ${cte}
+      SELECT COALESCE(sic,'') AS sic, SUM(mat=1) AS yes, SUM(mat=0) AS no,
+             SUM(mat IS NULL) AS na
+      FROM pop_co GROUP BY sic
+    `)) {
+      const div = sicDivision(r.sic || null);
+      const cur = sectorAgg.get(div) ?? { yes: 0, no: 0, na: 0 };
+      cur.yes += r.yes; cur.no += r.no; cur.na += r.na;
+      sectorAgg.set(div, cur);
+    }
+    const by_sector = [...sectorAgg.entries()]
+      .map(([sector, v]) => ({
+        sector, yes: v.yes, no: v.no, total: v.yes + v.no, rate: rate(v.yes, v.no),
+      }))
+      .filter((r) => r.total >= 30) // suppress tiny, noisy cells
+      .sort((a, b) => b.total - a.total); // largest sectors first
+
+    // By market-cap band: POPULATION 2 ONLY. INNER JOIN to market_cap drops
+    // every company without a calculated market cap for its date — we never
+    // assume or impute size (see roadmap rule).
+    const sizeRows = many<{ mat: number | null; mcap: number }>(`
+      ${cte}
+      SELECT pc.mat AS mat, mc.market_cap_usd AS mcap
+      FROM pop_co pc JOIN market_cap mc ON mc.cik = pc.cik
+    `);
+    const bandAgg = new Map<string, { companies: number; yes: number; no: number }>();
+    for (const b of SIZE_BANDS) bandAgg.set(b.label, { companies: 0, yes: 0, no: 0 });
+    for (const r of sizeRows) {
+      const b = bandFor(r.mcap);
+      if (!b) continue;
+      const cell = bandAgg.get(b.label)!;
+      cell.companies++;
+      if (r.mat === 1) cell.yes++;
+      else if (r.mat === 0) cell.no++;
+    }
+    const bands = SIZE_BANDS.map((b) => {
+      const c = bandAgg.get(b.label)!;
+      return {
+        label: b.label,
+        min: b.min,
+        max: Number.isFinite(b.max) ? b.max : null, // JSON has no Infinity
+        companies: c.companies,
+        yes: c.yes,
+        no: c.no,
+        rate: rate(c.yes, c.no),
+      };
+    });
+
     return {
-      label: b.label,
-      min: b.min,
-      max: Number.isFinite(b.max) ? b.max : null, // JSON has no Infinity
-      companies: c.companies,
-      yes: c.yes,
-      no: c.no,
-      rate: rate(c.yes, c.no),
+      companies: overallRow.companies,
+      annual_reports: by_yearend.reduce((a, r) => a + r.yes + r.no + r.na, 0),
+      overall: {
+        yes: overallRow.yes, no: overallRow.no, not_disclosed: overallRow.na,
+        rate: rate(overallRow.yes, overallRow.no),
+      },
+      by_yearend,
+      by_form,
+      by_sector,
+      by_size: { priced: sizeRows.length, bands },
     };
-  });
+  }
+
+  const materiality = flagBreakdowns(MATERIALITY_TAG);
 
   // --- Governance scorecard (one row per company, latest filing) ---
   // Reusable CTE: one row per (company, governance flag) collapsed value.
+  // (The flag tag passed to annualCte is irrelevant here — `fv` uses latest_co.)
   const GOV_FV = `
-    ${ANNUAL_CTE}
+    ${annualCte(MATERIALITY_TAG)}
     , fv AS (
       SELECT c.adsh, c.tag, MAX(c.flag_value) AS v
       FROM cyd_facts c JOIN latest_co l ON l.adsh = c.adsh
@@ -278,21 +305,18 @@ function buildSummary(db: DB): unknown {
       filings: one<{ n: number }>("SELECT COUNT(*) n FROM filings").n,
       facts: one<{ n: number }>("SELECT COUNT(*) n FROM cyd_facts").n,
       // distinct companies with an annual cyber filing (latest-filing basis)
-      companies: matOverall.companies,
+      companies: materiality.companies,
       // total annual reports across all years (the trend's basis)
-      annual_reports: matByYearEnd.reduce((a, r) => a + r.yes + r.no + r.na, 0),
+      annual_reports: materiality.annual_reports,
       tags: one<{ n: number }>("SELECT COUNT(*) n FROM cyd_tags").n,
     },
     materiality: {
       tag: MATERIALITY_TAG,
-      overall: {
-        yes: matOverall.yes, no: matOverall.no, not_disclosed: matOverall.na,
-        rate: rate(matOverall.yes, matOverall.no),
-      },
-      by_yearend: matByYearEnd,
-      by_form: matByForm,
-      by_sector: matBySector,
-      by_size: { priced: sizeRows.length, bands: matBySize },
+      overall: materiality.overall,
+      by_yearend: materiality.by_yearend,
+      by_form: materiality.by_form,
+      by_sector: materiality.by_sector,
+      by_size: materiality.by_size,
     },
     governance: {
       flags: govFlags,
