@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-13T15:49:36.089Z",
+  "generated_at": "2026-06-26T14:14:05.709Z",
   "source": "SEC EDGAR Financial Statement and Notes Data Sets (cyd: taxonomy)",
   "coverage": {
     "first_filed": "20241029",
@@ -449,11 +449,6 @@
     }
   ],
   "periods": [
-    {
-      "period": "2024q3",
-      "filings": 0,
-      "facts": 0
-    },
     {
       "period": "2024q4",
       "filings": 16,
