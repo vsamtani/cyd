@@ -18,6 +18,8 @@ export const DB_PATH = join(DATA_DIR, "cyd.db");
 /** Alpha Vantage: free API key (env) and per-run call budget (free tier ~25/day). */
 export const ALPHAVANTAGE_KEY = process.env.ALPHAVANTAGE_API_KEY ?? "";
 export const ALPHAVANTAGE_DAILY_LIMIT = Number(process.env.ALPHAVANTAGE_LIMIT ?? "25");
+/** Spacing between AV calls, ms — the free tier also caps ~5/min, so ~13s is safe. */
+export const ALPHAVANTAGE_CALL_DELAY_MS = Number(process.env.ALPHAVANTAGE_CALL_DELAY_MS ?? "13000");
 export const SCHEMA_PATH = join(ROOT, "sql", "schema.sql");
 
 /**

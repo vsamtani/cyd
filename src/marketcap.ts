@@ -4,8 +4,10 @@ import { join } from "node:path";
 import yauzl from "yauzl";
 import {
   RAW_DIR, MARKETCAP_FILE, MARKETCAP_AVFAILED_FILE,
-  ALPHAVANTAGE_KEY, ALPHAVANTAGE_DAILY_LIMIT,
+  ALPHAVANTAGE_KEY, ALPHAVANTAGE_DAILY_LIMIT, ALPHAVANTAGE_CALL_DELAY_MS,
 } from "./config.js";
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 import { download } from "./lib/http.js";
 import { streamEntryLines } from "./lib/zip.js";
 import type { DB } from "./lib/db.js";
@@ -199,7 +201,13 @@ async function avWeekly(ticker: string): Promise<[string, number][] | null> {
   const res = await fetch(url);
   if (!res.ok) return null;
   const data = (await res.json()) as Record<string, unknown>;
-  if (data["Note"] || data["Information"]) throw new Error("alpha-vantage-rate-limited");
+  const note = (data["Note"] ?? data["Information"]) as string | undefined;
+  if (note) {
+    const err = new Error(note) as Error & { avRateLimit: boolean; daily: boolean };
+    err.avRateLimit = true;
+    err.daily = /per day|daily|requests per day|premium/i.test(note);
+    throw err;
+  }
   const series = data["Weekly Adjusted Time Series"] as Record<string, Record<string, string>> | undefined;
   if (!series) return null; // unknown symbol / no data
   const rows: [string, number][] = Object.entries(series)
@@ -332,25 +340,36 @@ export async function computeMarketCaps(db: DB): Promise<MarketCapResult> {
     return ai - bi || a.localeCompare(b);
   });
 
-  let newAv = 0, avTried = 0;
+  let newAv = 0, avTried = 0, dailyHit = false;
   if (ALPHAVANTAGE_KEY) {
-    for (const ticker of avTickers.slice(0, ALPHAVANTAGE_DAILY_LIMIT)) {
+    const budget = avTickers.slice(0, ALPHAVANTAGE_DAILY_LIMIT);
+    for (let i = 0; i < budget.length && !dailyHit; i++) {
+      const ticker = budget[i]!;
+      if (i > 0) await sleep(ALPHAVANTAGE_CALL_DELAY_MS); // stay under the per-minute cap
       avTried++;
-      try {
-        const series = await avWeekly(ticker);
-        if (!series) { avFailed.add(ticker); continue; }
-        let hit = false;
-        for (const c of avByTicker.get(ticker)!) {
-          const p = closeOnOrBefore(series, c.as_of);
-          if (p) { record(c, p.close, p.date, "alphavantage"); newAv++; hit = true; }
-        }
-        if (!hit) avFailed.add(ticker);
-      } catch (err) {
-        if ((err as Error).message === "alpha-vantage-rate-limited") {
-          console.log("  Alpha Vantage daily limit reached — stopping");
+      for (let attempt = 0; ; attempt++) {
+        try {
+          const series = await avWeekly(ticker);
+          if (!series) { avFailed.add(ticker); break; } // unknown symbol / no data
+          let hit = false;
+          for (const c of avByTicker.get(ticker)!) {
+            const p = closeOnOrBefore(series, c.as_of);
+            if (p) { record(c, p.close, p.date, "alphavantage"); newAv++; hit = true; }
+          }
+          if (!hit) avFailed.add(ticker);
           break;
+        } catch (err) {
+          const e = err as Error & { avRateLimit?: boolean; daily?: boolean };
+          if (e.avRateLimit && e.daily) {
+            console.log("  Alpha Vantage daily limit reached — stopping (re-run tomorrow)");
+            dailyHit = true; break;
+          }
+          if (e.avRateLimit && attempt < 3) {
+            console.log("  Alpha Vantage per-minute limit — waiting 60s");
+            await sleep(60_000); continue;
+          }
+          avFailed.add(ticker); break;
         }
-        avFailed.add(ticker);
       }
     }
   } else if (avTickers.length) {
@@ -361,8 +380,11 @@ export async function computeMarketCaps(db: DB): Promise<MarketCapResult> {
   writeAvFailed(avFailed);
   loadIntoTable(db, priced);
 
-  const pending = avTickers.length - (ALPHAVANTAGE_KEY ? Math.min(avTickers.length, ALPHAVANTAGE_DAILY_LIMIT) : 0);
-  return { priced: priced.size, newStooq, newAv, pending: Math.max(0, pending), avTried };
+  // Pending = candidate tickers still without any price and not marked failed.
+  const pending = [...avByTicker.keys()].filter(
+    (t) => !avFailed.has(t) && !avByTicker.get(t)!.some((c) => priced.has(c.adsh)),
+  ).length;
+  return { priced: priced.size, newStooq, newAv, pending, avTried };
 }
 
 /** Load the committed market-cap records into the market_cap table. */

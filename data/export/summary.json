@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-26T19:23:24.984Z",
+  "generated_at": "2026-06-26T19:46:07.570Z",
   "source": "SEC EDGAR Financial Statement and Notes Data Sets (cyd: taxonomy)",
   "coverage": {
     "first_filed": "20241029",
@@ -143,7 +143,7 @@
       }
     ],
     "by_size": {
-      "priced": 4240,
+      "priced": 4241,
       "bands": [
         {
           "label": "Mega-cap",
@@ -185,10 +185,10 @@
           "label": "Micro-cap",
           "min": 0,
           "max": 300000000,
-          "companies": 1356,
+          "companies": 1357,
           "yes": 101,
-          "no": 1093,
-          "rate": 0.0846
+          "no": 1094,
+          "rate": 0.0845
         }
       ]
     }
