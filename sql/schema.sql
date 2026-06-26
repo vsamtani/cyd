@@ -73,15 +73,19 @@ CREATE INDEX IF NOT EXISTS idx_cyd_facts_adsh ON cyd_facts(adsh);
 -- year-end: shares outstanding (dei, from the filing) x Stooq close price on or
 -- before that date. Populated by src/marketcap.ts.
 CREATE TABLE IF NOT EXISTS market_cap (
-  cik            INTEGER PRIMARY KEY,
-  adsh           TEXT,    -- the filing the shares came from
+  adsh           TEXT PRIMARY KEY, -- the in-scope filing this market cap is for
+  cik            INTEGER,
+  form           TEXT,
   ticker         TEXT,
-  yearend        TEXT,    -- fiscal year-end date (YYYYMMDD)
-  shares         REAL,    -- total common shares outstanding (summed over classes)
-  price          REAL,    -- Stooq close (USD)
-  price_date     TEXT,    -- actual trading date used (<= yearend)
+  as_of          TEXT,    -- relevant date: fiscal year-end (annual) or filed (8-K)
+  as_of_kind     TEXT,    -- 'yearend' | 'filed'
+  shares         REAL,    -- total common shares outstanding
+  price          REAL,    -- close (USD) on/before as_of
+  price_date     TEXT,    -- actual trading date used (<= as_of)
+  source         TEXT,    -- 'stooq' | 'alphavantage'
   market_cap_usd REAL
 );
+CREATE INDEX IF NOT EXISTS idx_market_cap_cik ON market_cap(cik);
 
 -- Bookkeeping: which FSN dataset periods have been ingested.
 CREATE TABLE IF NOT EXISTS ingested_periods (

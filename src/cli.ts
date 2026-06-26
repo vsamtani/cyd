@@ -79,8 +79,8 @@ program
     try {
       const r = await computeMarketCaps(db);
       console.log(
-        `Priced ${r.priced} of ${r.population} US-domestic companies` +
-          ` (${r.droppedOutliers} dropped as scaling outliers)`,
+        `Market cap: ${r.priced} filings priced` +
+          ` (+${r.newStooq} Stooq, +${r.newAv} Alpha Vantage this run; ${r.pending} ticker(s) pending)`,
       );
     } finally {
       db.close();

@@ -9,7 +9,15 @@ export const DATA_DIR = join(ROOT, "data");
 export const RAW_DIR = join(DATA_DIR, "raw");
 /** Committed per-filing-day source files (the ingest source; public-domain). */
 export const SOURCE_DIR = join(DATA_DIR, "source");
+/** Committed, once-and-done market-cap data (one record per priced filing). */
+export const MARKETCAP_FILE = join(SOURCE_DIR, "marketcap.ndjson");
+/** Tickers Alpha Vantage has been tried on and can't price (skip on retry). */
+export const MARKETCAP_AVFAILED_FILE = join(SOURCE_DIR, "marketcap_avfailed.json");
 export const DB_PATH = join(DATA_DIR, "cyd.db");
+
+/** Alpha Vantage: free API key (env) and per-run call budget (free tier ~25/day). */
+export const ALPHAVANTAGE_KEY = process.env.ALPHAVANTAGE_API_KEY ?? "";
+export const ALPHAVANTAGE_DAILY_LIMIT = Number(process.env.ALPHAVANTAGE_LIMIT ?? "25");
 export const SCHEMA_PATH = join(ROOT, "sql", "schema.sql");
 
 /**
