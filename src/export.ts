@@ -189,7 +189,7 @@ function buildSummary(db: DB): unknown {
     const sizeRows = many<{ mat: number | null; mcap: number }>(`
       ${cte}
       SELECT pc.mat AS mat, mc.market_cap_usd AS mcap
-      FROM pop_co pc JOIN market_cap mc ON mc.cik = pc.cik
+      FROM pop_co pc JOIN market_cap mc ON mc.adsh = pc.adsh
     `);
     const bandAgg = new Map<string, { companies: number; yes: number; no: number }>();
     for (const b of SIZE_BANDS) bandAgg.set(b.label, { companies: 0, yes: 0, no: 0 });

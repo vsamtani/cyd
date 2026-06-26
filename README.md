@@ -44,7 +44,7 @@ Individual steps:
 npm run fetch      # download available FSN dataset zips -> data/raw/
 npm run split      # filter zips into committed per-day source files -> data/source/
 npm run ingest     # load data/source/ -> data/cyd.db
-npm run marketcap  # US-domestic market caps (needs data/raw/d_us_txt.zip)
+npm run marketcap  # price filings -> data/source/marketcap.ndjson (Stooq + AV)
 npm run export     # write data/export/ (CSVs + summary.json)
 npm run incidents  # fetch + sanitise incident filing text -> data/export/incidents/
 npm run status     # summary of the database
@@ -55,7 +55,12 @@ npm run dev        # build dist/ and serve at http://localhost:8000
 file per filing-day (`YYYY/YYYY-MM-DD.ndjson`) — in-scope filing metadata + cyd
 facts, plus a shared `cyd_tags.ndjson`. `ingest` reads these (no raw zips
 needed), so the dataset is **reproducible from git alone**, and refreshes append
-new day-files rather than rewriting. Steps are **idempotent**; raw zips are
+new day-files rather than rewriting. Market cap is committed the same way in
+`data/source/marketcap.ndjson` (one record per priced filing, append-only);
+`ingest` loads it, so size bands build with no pricing at build time. `marketcap`
+backfills from the local Stooq file and fills gaps via Alpha Vantage
+(`ALPHAVANTAGE_API_KEY`, free, ~25 calls/run) — without the key it still does the
+full Stooq backfill and leaves the rest pending. Steps are **idempotent**; raw zips are
 **retained** (see "Data model"). The dashboard is built from the committed
 `data/export/` and deployed to GitHub Pages on push to `main`. `split` and
 `marketcap` need the cached raw zips (and `marketcap` the Stooq file at

@@ -2,6 +2,7 @@ import { readdirSync, readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { SOURCE_DIR, EDGAR_ARCHIVES, FSN_BASE } from "./config.js";
 import { transaction, type DB } from "./lib/db.js";
+import { loadIntoTable } from "./marketcap.js";
 
 const intOrNull = (s: string): number | null => {
   if (!s) return null;
@@ -173,6 +174,10 @@ export function ingestAll(db: DB): IngestResult {
 
   // Rebuild the per-FSN-period bookkeeping (provenance) from the loaded data.
   rebuildIngestedPeriods(db);
+
+  // Load the committed market-cap data (if any) into the market_cap table, so a
+  // build from committed source has size data without recomputing prices.
+  loadIntoTable(db);
 
   const factCount = (db.prepare("SELECT COUNT(*) n FROM cyd_facts").get() as { n: number }).n;
   return { filings: filings.length, facts: factCount, tags: tagRows.length };
