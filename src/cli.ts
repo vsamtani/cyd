@@ -1,6 +1,7 @@
 import { Command } from "commander";
 import { openDb } from "./lib/db.js";
 import { fetchAll } from "./fetchFsn.js";
+import { splitAll } from "./split.js";
 import { ingestAll } from "./ingest.js";
 import { exportAll, EXPORT_DIR } from "./export.js";
 import { processIncidents } from "./incidents.js";
@@ -20,12 +21,23 @@ program
   });
 
 program
-  .command("ingest")
-  .description("Parse data/raw/*_notes.zip into data/cyd.db")
+  .command("split")
+  .description("Filter cached FSN zips into committed per-day source files (data/source/)")
   .action(async () => {
+    const r = await splitAll();
+    console.log(
+      `Wrote ${r.days} day-files: ${r.filings} filings, ${r.facts} facts, ${r.tags} tags -> data/source/`,
+    );
+  });
+
+program
+  .command("ingest")
+  .description("Load committed per-day source files (data/source/) into data/cyd.db")
+  .action(() => {
     const db = openDb();
     try {
-      await ingestAll(db);
+      const r = ingestAll(db);
+      console.log(`Ingested ${r.filings} filings, ${r.facts} facts, ${r.tags} tags`);
     } finally {
       db.close();
     }
@@ -85,12 +97,13 @@ program
 
 program
   .command("pipeline")
-  .description("Fetch, ingest, then export")
+  .description("Fetch, split, ingest, then export")
   .action(async () => {
     await fetchAll();
+    await splitAll();
     const db = openDb();
     try {
-      await ingestAll(db);
+      ingestAll(db);
       const r = await exportAll(db);
       console.log(
         `Exported ${r.filings} filings, ${r.facts} facts (${r.textFacts} text blocks) to ${EXPORT_DIR}`,

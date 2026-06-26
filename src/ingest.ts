@@ -1,42 +1,7 @@
-import { readdirSync, statSync } from "node:fs";
+import { readdirSync, readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
-import { RAW_DIR, ALLOWED_FORMS, EDGAR_ARCHIVES } from "./config.js";
-import { streamEntryLines } from "./lib/zip.js";
+import { SOURCE_DIR, EDGAR_ARCHIVES, FSN_BASE } from "./config.js";
 import { transaction, type DB } from "./lib/db.js";
-
-// ---- TSV helpers -----------------------------------------------------------
-
-/**
- * Split a TSV line into exactly `count` fields. The final field absorbs any
- * remaining tabs, so text values containing tabs (the last column) stay intact.
- */
-function splitTsv(line: string, count: number): string[] {
-  const out: string[] = [];
-  let start = 0;
-  for (let i = 0; i < count - 1; i++) {
-    const idx = line.indexOf("\t", start);
-    if (idx === -1) {
-      out.push(line.slice(start));
-      while (out.length < count) out.push("");
-      return out;
-    }
-    out.push(line.slice(start, idx));
-    start = idx + 1;
-  }
-  out.push(line.slice(start));
-  return out;
-}
-
-function makeIndexer(headerLine: string) {
-  const cols = headerLine.split("\t");
-  const pos = new Map<string, number>();
-  cols.forEach((c, i) => pos.set(c, i));
-  const get = (fields: string[], name: string): string => {
-    const i = pos.get(name);
-    return i === undefined ? "" : fields[i] ?? "";
-  };
-  return { count: cols.length, get };
-}
 
 const intOrNull = (s: string): number | null => {
   if (!s) return null;
@@ -49,168 +14,63 @@ const floatOrNull = (s: string): number | null => {
   return Number.isNaN(n) ? null : n;
 };
 
-// ---- Row shapes ------------------------------------------------------------
-
-interface CydFactRow {
-  adsh: string;
-  tag: string;
-  version: string;
-  ddate: string;
-  qtrs: number | null;
-  dimh: string;
-  iprx: number;
-  coreg: string;
-  lang: string;
-  escaped: number | null;
-  srclen: number | null;
-  txtlen: number | null;
-  value: string;
+function filingUrl(cik: string, adsh: string): string {
+  return `${EDGAR_ARCHIVES}/${Number(cik)}/${adsh.replace(/-/g, "")}/${adsh}-index.htm`;
 }
-
-// ---- Per-zip ingest --------------------------------------------------------
 
 export interface IngestResult {
-  period: string;
-  url: string;
-  zipBytes: number;
   filings: number;
   facts: number;
+  tags: number;
 }
 
-function filingUrl(cik: string, adsh: string): string {
-  const noDash = adsh.replace(/-/g, "");
-  return `${EDGAR_ARCHIVES}/${Number(cik)}/${noDash}/${adsh}-index.htm`;
+interface TagRec { tag: string; version: string; datatype: string; label: string; doc: string }
+interface FilingRec {
+  adsh: string; cik: string; name: string; sic: string; form: string; period: string;
+  fy: string; fp: string; filed: string; accepted: string; countryinc: string;
+  stprinc: string; countryba: string; stprba: string; ein: string; instance: string;
+  pubfloatusd: string; src: string;
+}
+interface FactRec {
+  adsh: string; tag: string; version: string; ddate: string; qtrs: string; dimh: string;
+  iprx: string; coreg: string; lang: string; escaped: string; srclen: string;
+  txtlen: string; value: string;
 }
 
-export async function ingestZip(
-  db: DB,
-  period: string,
-  zipPath: string,
-): Promise<IngestResult> {
-  // 1. tag.tsv -> cyd taxonomy dictionary + datatype map (for flag detection)
-  const datatypeByKey = new Map<string, string>(); // `${tag}\t${version}` -> datatype
-  const tagRows: {
-    tag: string;
-    version: string;
-    datatype: string;
-    label: string;
-    doc: string;
-  }[] = [];
-  {
-    let header: ReturnType<typeof makeIndexer> | null = null;
-    for await (const line of streamEntryLines(zipPath, "tag.tsv")) {
-      if (!header) {
-        header = makeIndexer(line);
-        continue;
+/** Read every day-file under data/source/YYYY/*.ndjson (skips cyd_tags). */
+function readDayRecords(): { filings: FilingRec[]; facts: FactRec[] } {
+  const filings: FilingRec[] = [];
+  const facts: FactRec[] = [];
+  for (const year of readdirSync(SOURCE_DIR).filter((d) => /^\d{4}$/.test(d)).sort()) {
+    const dir = join(SOURCE_DIR, year);
+    for (const file of readdirSync(dir).filter((f) => f.endsWith(".ndjson")).sort()) {
+      for (const line of readFileSync(join(dir, file), "utf8").split("\n")) {
+        if (!line) continue;
+        const rec = JSON.parse(line) as { t?: string };
+        if (rec.t === "filing") filings.push(rec as FilingRec);
+        else if (rec.t === "fact") facts.push(rec as FactRec);
       }
-      const f = splitTsv(line, header.count);
-      const version = header.get(f, "version");
-      if (!version.startsWith("cyd/")) continue;
-      const tag = header.get(f, "tag");
-      const datatype = header.get(f, "datatype");
-      datatypeByKey.set(`${tag}\t${version}`, datatype);
-      tagRows.push({
-        tag,
-        version,
-        datatype,
-        label: header.get(f, "tlabel"),
-        doc: header.get(f, "doc"),
-      });
     }
   }
+  return { filings, facts };
+}
 
-  // 2. txt.tsv -> buffer cyd facts and collect their accession numbers
-  const facts: CydFactRow[] = [];
-  const adshNeeded = new Set<string>();
-  {
-    let header: ReturnType<typeof makeIndexer> | null = null;
-    for await (const line of streamEntryLines(zipPath, "txt.tsv")) {
-      if (!header) {
-        header = makeIndexer(line);
-        continue;
-      }
-      const f = splitTsv(line, header.count);
-      const version = header.get(f, "version");
-      if (!version.startsWith("cyd/")) continue;
-      const adsh = header.get(f, "adsh");
-      adshNeeded.add(adsh);
-      facts.push({
-        adsh,
-        tag: header.get(f, "tag"),
-        version,
-        ddate: header.get(f, "ddate"),
-        qtrs: intOrNull(header.get(f, "qtrs")),
-        dimh: header.get(f, "dimh"),
-        iprx: intOrNull(header.get(f, "iprx")) ?? 0,
-        coreg: header.get(f, "coreg"),
-        lang: header.get(f, "lang"),
-        escaped:
-          header.get(f, "escaped") === "1"
-            ? 1
-            : header.get(f, "escaped") === "0"
-              ? 0
-              : null,
-        srclen: intOrNull(header.get(f, "srclen")),
-        txtlen: intOrNull(header.get(f, "txtlen")),
-        value: header.get(f, "value"),
-      });
-    }
+/** Ingest the committed per-day source files (data/source/**) into the DB. */
+export function ingestAll(db: DB): IngestResult {
+  const tagsPath = join(SOURCE_DIR, "cyd_tags.ndjson");
+  if (!existsSync(tagsPath)) {
+    console.log("No source files in data/source/. Run `npm run split` first.");
+    return { filings: 0, facts: 0, tags: 0 };
   }
 
-  // 3. sub.tsv -> metadata for the needed filings, restricted to allowed forms
-  interface FilingMeta {
-    cik: string;
-    name: string;
-    sic: string;
-    form: string;
-    period: string;
-    fy: string;
-    fp: string;
-    filed: string;
-    accepted: string;
-    countryinc: string;
-    stprinc: string;
-    countryba: string;
-    stprba: string;
-    ein: string;
-    instance: string;
-    pubfloatusd: string;
-  }
-  const filings = new Map<string, FilingMeta>();
-  {
-    let header: ReturnType<typeof makeIndexer> | null = null;
-    for await (const line of streamEntryLines(zipPath, "sub.tsv")) {
-      if (!header) {
-        header = makeIndexer(line);
-        continue;
-      }
-      const f = splitTsv(line, header.count);
-      const adsh = header.get(f, "adsh");
-      if (!adshNeeded.has(adsh)) continue;
-      const form = header.get(f, "form");
-      if (!ALLOWED_FORMS.has(form)) continue;
-      filings.set(adsh, {
-        cik: header.get(f, "cik"),
-        name: header.get(f, "name"),
-        sic: header.get(f, "sic"),
-        form,
-        period: header.get(f, "period"),
-        fy: header.get(f, "fy"),
-        fp: header.get(f, "fp"),
-        filed: header.get(f, "filed"),
-        accepted: header.get(f, "accepted"),
-        countryinc: header.get(f, "countryinc"),
-        stprinc: header.get(f, "stprinc"),
-        countryba: header.get(f, "countryba"),
-        stprba: header.get(f, "stprba"),
-        ein: header.get(f, "ein"),
-        instance: header.get(f, "instance"),
-        pubfloatusd: header.get(f, "pubfloatusd"),
-      });
-    }
-  }
+  // cyd taxonomy dictionary + datatype map (for flag detection)
+  const tagRows = readFileSync(tagsPath, "utf8")
+    .split("\n").filter(Boolean).map((l) => JSON.parse(l) as TagRec);
+  const datatypeByKey = new Map<string, string>();
+  for (const t of tagRows) datatypeByKey.set(`${t.tag}\t${t.version}`, t.datatype ?? "");
 
-  // 4. Upsert everything in a single transaction.
+  const { filings, facts } = readDayRecords();
+
   const upsertTag = db.prepare(`
     INSERT INTO cyd_tags (tag, version, datatype, label, doc)
     VALUES (@tag, @version, @datatype, @label, @doc)
@@ -251,19 +111,25 @@ export async function ingestZip(
       flag_value=excluded.flag_value
   `);
 
-  const factCount = transaction(db, () => {
-    for (const t of tagRows) upsertTag.run(t);
+  const inScope = new Set(filings.map((f) => f.adsh!));
 
-    for (const [adsh, m] of filings) {
+  transaction(db, () => {
+    for (const t of tagRows) {
+      upsertTag.run({
+        tag: t.tag, version: t.version,
+        datatype: t.datatype || null, label: t.label || null, doc: t.doc || null,
+      });
+    }
+    for (const m of filings) {
       upsertFiling.run({
-        adsh,
-        cik: intOrNull(m.cik),
+        adsh: m.adsh,
+        cik: intOrNull(m.cik ?? ""),
         company_name: m.name || null,
         sic: m.sic || null,
         form: m.form,
-        is_amendment: m.form.includes("/A") ? 1 : 0,
+        is_amendment: m.form!.includes("/A") ? 1 : 0,
         period: m.period || null,
-        fy: intOrNull(m.fy),
+        fy: intOrNull(m.fy ?? ""),
         fp: m.fp || null,
         filed_date: m.filed || null,
         accepted: m.accepted || null,
@@ -273,81 +139,71 @@ export async function ingestZip(
         state_ba: m.stprba || null,
         ein: m.ein || null,
         instance: m.instance || null,
-        pubfloatusd: floatOrNull(m.pubfloatusd),
-        source_period: period,
-        filing_url: filingUrl(m.cik, adsh),
+        pubfloatusd: floatOrNull(m.pubfloatusd ?? ""),
+        source_period: m.src,
+        filing_url: filingUrl(m.cik ?? "", m.adsh!),
       });
     }
-
-    let factCount = 0;
     for (const fact of facts) {
-      if (!filings.has(fact.adsh)) continue; // form not in scope
+      if (!inScope.has(fact.adsh!)) continue;
       const datatype = datatypeByKey.get(`${fact.tag}\t${fact.version}`) ?? "";
       const isFlag = datatype.toLowerCase() === "boolean" ? 1 : 0;
       let flagValue: number | null = null;
       if (isFlag) {
-        const v = fact.value.trim().toLowerCase();
+        const v = (fact.value ?? "").trim().toLowerCase();
         flagValue = v === "true" ? 1 : v === "false" ? 0 : null;
       }
       upsertFact.run({
-        adsh: fact.adsh,
-        tag: fact.tag,
-        version: fact.version,
+        adsh: fact.adsh, tag: fact.tag, version: fact.version,
         ddate: fact.ddate || null,
-        qtrs: fact.qtrs,
+        qtrs: intOrNull(fact.qtrs ?? ""),
         dimh: fact.dimh || "",
-        iprx: fact.iprx,
+        iprx: intOrNull(fact.iprx ?? "") ?? 0,
         coreg: fact.coreg || "",
         lang: fact.lang || null,
-        escaped: fact.escaped,
-        srclen: fact.srclen,
-        txtlen: fact.txtlen,
-        value: fact.value,
+        escaped: fact.escaped === "1" ? 1 : fact.escaped === "0" ? 0 : null,
+        srclen: intOrNull(fact.srclen ?? ""),
+        txtlen: intOrNull(fact.txtlen ?? ""),
+        value: fact.value ?? "",
         is_flag: isFlag,
         flag_value: flagValue,
       });
-      factCount++;
     }
-    return factCount;
   });
 
-  const zipBytes = statSync(zipPath).size;
-  const url = `https://www.sec.gov/files/dera/data/financial-statement-notes-data-sets/${period}_notes.zip`;
-  db.prepare(`
-    INSERT INTO ingested_periods (period, url, zip_bytes, filings_count, facts_count, ingested_at)
-    VALUES (@period, @url, @zip_bytes, @filings_count, @facts_count, @ingested_at)
-    ON CONFLICT(period) DO UPDATE SET
-      url=excluded.url, zip_bytes=excluded.zip_bytes,
-      filings_count=excluded.filings_count, facts_count=excluded.facts_count,
-      ingested_at=excluded.ingested_at
-  `).run({
-    period,
-    url,
-    zip_bytes: zipBytes,
-    filings_count: filings.size,
-    facts_count: factCount,
-    ingested_at: new Date().toISOString(),
-  });
+  // Rebuild the per-FSN-period bookkeeping (provenance) from the loaded data.
+  rebuildIngestedPeriods(db);
 
-  return { period, url, zipBytes, filings: filings.size, facts: factCount };
+  const factCount = (db.prepare("SELECT COUNT(*) n FROM cyd_facts").get() as { n: number }).n;
+  return { filings: filings.length, facts: factCount, tags: tagRows.length };
 }
 
-/** Ingest every *_notes.zip present in data/raw/. */
-export async function ingestAll(db: DB): Promise<IngestResult[]> {
-  const files = readdirSync(RAW_DIR)
-    .filter((f) => f.endsWith("_notes.zip"))
-    .sort();
-  if (files.length === 0) {
-    console.log("No FSN zips found in data/raw/. Run `npm run fetch` first.");
-    return [];
-  }
-  const results: IngestResult[] = [];
-  for (const file of files) {
-    const period = file.replace(/_notes\.zip$/, "");
-    process.stdout.write(`  ingest ${period} ... `);
-    const res = await ingestZip(db, period, join(RAW_DIR, file));
-    console.log(`${res.filings} filings, ${res.facts} facts`);
-    results.push(res);
-  }
-  return results;
+function rebuildIngestedPeriods(db: DB): void {
+  const filingsPer = db.prepare(
+    "SELECT source_period AS p, COUNT(*) n FROM filings GROUP BY source_period",
+  ).all() as { p: string; n: number }[];
+  const factsPer = db.prepare(
+    "SELECT f.source_period AS p, COUNT(*) n FROM cyd_facts c JOIN filings f ON f.adsh=c.adsh GROUP BY f.source_period",
+  ).all() as { p: string; n: number }[];
+  const factMap = new Map(factsPer.map((r) => [r.p, r.n]));
+  const now = new Date().toISOString();
+  const upsert = db.prepare(`
+    INSERT INTO ingested_periods (period, url, zip_bytes, filings_count, facts_count, ingested_at)
+    VALUES (@period, @url, NULL, @filings_count, @facts_count, @ingested_at)
+    ON CONFLICT(period) DO UPDATE SET
+      filings_count=excluded.filings_count, facts_count=excluded.facts_count,
+      url=excluded.url, ingested_at=excluded.ingested_at
+  `);
+  transaction(db, () => {
+    db.exec("DELETE FROM ingested_periods");
+    for (const r of filingsPer) {
+      upsert.run({
+        period: r.p,
+        url: `${FSN_BASE}/${r.p}_notes.zip`,
+        filings_count: r.n,
+        facts_count: factMap.get(r.p) ?? 0,
+        ingested_at: now,
+      });
+    }
+  });
 }

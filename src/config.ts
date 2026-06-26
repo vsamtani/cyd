@@ -7,6 +7,8 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 export const ROOT = join(__dirname, "..");
 export const DATA_DIR = join(ROOT, "data");
 export const RAW_DIR = join(DATA_DIR, "raw");
+/** Committed per-filing-day source files (the ingest source; public-domain). */
+export const SOURCE_DIR = join(DATA_DIR, "source");
 export const DB_PATH = join(DATA_DIR, "cyd.db");
 export const SCHEMA_PATH = join(ROOT, "sql", "schema.sql");
 

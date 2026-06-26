@@ -34,15 +34,16 @@ export SEC_USER_AGENT="your-app your-email@example.com"
 Refresh all data, then commit and push to redeploy the dashboard:
 
 ```bash
-npm run refresh    # fetch -> ingest -> marketcap -> export -> incidents
-git add data/export && git commit -m "Refresh data" && git push   # -> Pages deploy
+npm run refresh    # fetch -> split -> ingest -> marketcap -> export -> incidents
+git add data/source data/export && git commit -m "Refresh data" && git push  # -> Pages deploy
 ```
 
 Individual steps:
 
 ```bash
 npm run fetch      # download available FSN dataset zips -> data/raw/
-npm run ingest     # parse data/raw/*_notes.zip -> data/cyd.db
+npm run split      # filter zips into committed per-day source files -> data/source/
+npm run ingest     # load data/source/ -> data/cyd.db
 npm run marketcap  # US-domestic market caps (needs data/raw/d_us_txt.zip)
 npm run export     # write data/export/ (CSVs + summary.json)
 npm run incidents  # fetch + sanitise incident filing text -> data/export/incidents/
@@ -50,11 +51,15 @@ npm run status     # summary of the database
 npm run dev        # build dist/ and serve at http://localhost:8000
 ```
 
-Steps are **idempotent** and raw zips are **retained** (see "Data model"). The
-dashboard is built from the committed `data/export/` and deployed to GitHub Pages
-on push to `main` (`.github/workflows/deploy.yml`). `marketcap` — and therefore
-`refresh` — needs the Stooq bulk file at `data/raw/d_us_txt.zip` (a manual
-download); the rest of the pipeline works from public SEC data alone.
+`data/source/` holds the **public-domain source data** as one immutable NDJSON
+file per filing-day (`YYYY/YYYY-MM-DD.ndjson`) — in-scope filing metadata + cyd
+facts, plus a shared `cyd_tags.ndjson`. `ingest` reads these (no raw zips
+needed), so the dataset is **reproducible from git alone**, and refreshes append
+new day-files rather than rewriting. Steps are **idempotent**; raw zips are
+**retained** (see "Data model"). The dashboard is built from the committed
+`data/export/` and deployed to GitHub Pages on push to `main`. `split` and
+`marketcap` need the cached raw zips (and `marketcap` the Stooq file at
+`data/raw/d_us_txt.zip`); `ingest` and downstream work from committed data alone.
 
 ## Data model (`data/cyd.db`)
 
