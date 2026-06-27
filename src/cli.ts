@@ -65,7 +65,7 @@ program
     const db = openDb();
     try {
       const n = await processIncidents(db);
-      console.log(`Processed ${n} incident filing(s) -> ${EXPORT_DIR}/incidents`);
+      console.log(`Processed ${n} incident filing(s) -> data/source/incidents`);
     } finally {
       db.close();
     }

@@ -1,8 +1,9 @@
 name: Deploy dashboard to GitHub Pages
 
-# Deploy-only: this assembles the static site from the committed data/export/
-# (no raw FSN/Stooq data is needed in CI). Refresh the data locally with
-# `npm run refresh`, commit data/export/, and push — that triggers a redeploy.
+# Regenerates the derived data (data/export/) from the committed source
+# (data/source/: day-files + market cap) and deploys the static site. No raw
+# FSN/Stooq data or live pricing is needed in CI. Refresh the source locally
+# with `npm run refresh`, commit data/source/, and push — that triggers a rebuild.
 on:
   push:
     branches: [main]
@@ -29,8 +30,10 @@ jobs:
           node-version: "24" # node:sqlite is available without a flag on Node 24+
           cache: npm
       - run: npm ci
-      - name: Assemble static site into dist/
-        run: npx tsx src/cli.ts site
+      - name: Build DB from committed source (day-files + market cap)
+        run: npx tsx src/cli.ts ingest
+      - name: Regenerate data/export and assemble dist/
+        run: npm run build:site
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

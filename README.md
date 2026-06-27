@@ -35,7 +35,7 @@ Refresh all data, then commit and push to redeploy the dashboard:
 
 ```bash
 npm run refresh    # fetch -> split -> ingest -> marketcap -> export -> incidents
-git add data/source data/export && git commit -m "Refresh data" && git push  # -> Pages deploy
+git add data/source && git commit -m "Refresh data" && git push  # -> CI rebuilds + deploys
 ```
 
 Individual steps:
@@ -45,8 +45,8 @@ npm run fetch      # download available FSN dataset zips -> data/raw/
 npm run split      # filter zips into committed per-day source files -> data/source/
 npm run ingest     # load data/source/ -> data/cyd.db
 npm run marketcap  # price filings -> data/source/marketcap.ndjson (Stooq + AV)
-npm run export     # write data/export/ (CSVs + summary.json)
-npm run incidents  # fetch + sanitise incident filing text -> data/export/incidents/
+npm run incidents  # fetch + sanitise incident filing text -> data/source/incidents/
+npm run export     # regenerate data/export/ (CSVs + summary.json; gitignored)
 npm run status     # summary of the database
 npm run dev        # build dist/ and serve at http://localhost:8000
 ```
@@ -60,11 +60,15 @@ new day-files rather than rewriting. Market cap is committed the same way in
 `ingest` loads it, so size bands build with no pricing at build time. `marketcap`
 backfills from the local Stooq file and fills gaps via Alpha Vantage
 (`ALPHAVANTAGE_API_KEY`, free, ~25 calls/run) — without the key it still does the
-full Stooq backfill and leaves the rest pending. Steps are **idempotent**; raw zips are
-**retained** (see "Data model"). The dashboard is built from the committed
-`data/export/` and deployed to GitHub Pages on push to `main`. `split` and
-`marketcap` need the cached raw zips (and `marketcap` the Stooq file at
-`data/raw/d_us_txt.zip`); `ingest` and downstream work from committed data alone.
+full Stooq backfill and leaves the rest pending. Incident full-text HTML is
+committed under `data/source/incidents/` too. Steps are **idempotent**; raw zips
+are **retained** (see "Data model").
+
+Only `data/source/` is committed. On push to `main`, CI **regenerates**
+`data/export/` from it (`ingest` → `build:site`) and deploys to GitHub Pages —
+no raw zips, Stooq file, or live pricing needed at build time. `fetch`/`split`
+need the cached raw zips and `marketcap` the Stooq file (`data/raw/d_us_txt.zip`),
+but those run locally; everything CI does works from committed `data/source/`.
 
 ## Data model (`data/cyd.db`)
 
