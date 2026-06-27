@@ -1,6 +1,6 @@
 import { mkdirSync, copyFileSync, existsSync, cpSync } from "node:fs";
 import { join } from "node:path";
-import { ROOT } from "./config.js";
+import { ROOT, SOURCE_DIR } from "./config.js";
 import { EXPORT_DIR } from "./export.js";
 
 const SITE_DIR = join(ROOT, "site");
@@ -25,8 +25,8 @@ export function buildSite(): string {
   }
   copyFileSync(summary, join(DIST_DIR, "data", "summary.json"));
 
-  // Incident full-text HTML (clean + raw), if produced by `cyd incidents`.
-  const incidentsSrc = join(EXPORT_DIR, "incidents");
+  // Incident full-text HTML (clean + raw) — committed under data/source/.
+  const incidentsSrc = join(SOURCE_DIR, "incidents");
   if (existsSync(incidentsSrc)) {
     cpSync(incidentsSrc, join(DIST_DIR, "data", "incidents"), { recursive: true });
   }

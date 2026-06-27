@@ -1,14 +1,13 @@
 import { mkdirSync, existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { EDGAR_ARCHIVES, DATA_DIR } from "./config.js";
+import { EDGAR_ARCHIVES, DATA_DIR, SOURCE_DIR } from "./config.js";
 import { download } from "./lib/http.js";
-import { EXPORT_DIR } from "./export.js";
 import type { DB } from "./lib/db.js";
 
 /** Cached full-submission .txt files (re-fetchable; gitignored). */
 const CACHE_DIR = join(DATA_DIR, "incidents_raw");
-/** Committed output: raw + sanitised primary-document HTML per incident. */
-const OUT_DIR = join(EXPORT_DIR, "incidents");
+/** Committed output (immutable per filing): raw + sanitised primary-document HTML. */
+const OUT_DIR = join(SOURCE_DIR, "incidents");
 
 interface IncidentFiling {
   adsh: string;
